@@ -30,6 +30,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
 #include "main.h"
+#include "mpu6500.h"
+#include "mcu_setting.h"
     
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{
@@ -162,12 +164,47 @@ void DMA2_Stream0_IRQHandler(void)
 {
   if(DMA_GetFlagStatus(DMA2_Stream0,DMA_IT_TCIF0)==SET)
   {
-    GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
     DMA_ClearFlag(DMA2_Stream0,DMA_IT_TCIF0);
     DMA_ClearITPendingBit(DMA2_Stream0,DMA_IT_TCIF0);
     DMA_Cmd(DMA2_Stream0,DISABLE);  
   }
-    
+  
+}
+
+void TIM4_IRQHandler()
+{
+  if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET){
+     
+    //GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
+    int k=0;
+    int16_t   AccelGyro[7];
+      
+      GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
+      // DMA_Cmd(DMA2_Stream0,ENABLE);
+      
+      // GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+      // SPIx_WriteByte(SPI1, 0x80 | MPU6500_ACCEL_XOUT_H); 
+      
+      // for(k=0;k<16;k++)
+      // {   
+      //     SPIx_WriteByte(SPI1,0xFF);
+      // }
+ 
+      // GPIO_SetBits(GPIOA,GPIO_Pin_4);
+
+      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, &mpu6500_buf, 14);
+
+      int i=0; 
+      for(i=1; i<4; i++) 
+      AccelGyro[i]=((s16)((u16)mpu6500_buf[2*i] << 8) + mpu6500_buf[2*i+1]);
+      /* Get Angular rate */
+      for(i=5; i<8; i++)
+      AccelGyro[i-1]=((s16)((u16)mpu6500_buf[2*i] << 8) + mpu6500_buf[2*i+1]);
+      //printf("%d,%d,%d,%d,%d,%d\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2],AccelGyro[3],AccelGyro[4],AccelGyro[5]);
+    printf("%d\r\n",AccelGyro[2]);
+
+    TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+  } 
 }
 
 

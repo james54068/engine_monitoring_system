@@ -5,31 +5,28 @@ uint8_t mpu6500_buf[16];
 
 void MCU_initialization(void)
 {
-    RCC_Configuration();
+    SysTick_cfg();
     GPIO_Configuration();
     NVIC_configuration();
-    USART1_Configuration();
-
-
+    USART1_Configuration();  
+    Timer4_Initialization();
+    DMA2_stream0_channel3_init();
+  
 }
 
 void RCC_Configuration(void)
 {
       /* --------------------------- System Clocks Configuration -----------------*/
-      /* USART1 clock enable */
-      RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
-      /* DMA2 clock enable */
-      RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
-      /* GPIOA clock enable */
-      RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+      
 }
  
 /**************************************************************************************/
  
 void GPIO_Configuration(void)
 {
+    /* GPIOA clock enable */
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
     GPIO_InitTypeDef GPIO_InitStructure;
-
 
     /*-------------------------- GPIO Configuration for Push Button ----------------------------*/
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2;
@@ -58,8 +55,16 @@ void NVIC_configuration(void)
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
   /*preemption:2 sub:8*/
 
+  /*DMA2 Stream0 Interrupt */
   NVIC_InitStruct.NVIC_IRQChannel = DMA2_Stream0_IRQn;
   NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0; 
+  NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStruct);
+
+  /*TIM4 global Interrupt */
+  NVIC_InitStruct.NVIC_IRQChannel =  TIM4_IRQn ;
+  NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStruct);
@@ -69,6 +74,8 @@ void NVIC_configuration(void)
 
 void USART1_Configuration(void)
 {
+    /* USART1 clock enable */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
     USART_InitTypeDef USART_InitStructure;
 
     /* USARTx configuration ------------------------------------------------------*/
@@ -90,8 +97,29 @@ void USART1_Configuration(void)
     USART_Cmd(USART1, ENABLE);
 }
 
+void Timer4_Initialization(void)
+{
+
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+
+  /* -- Timer Configuration --------------------------------------------------- */
+  TIM_DeInit(TIM4);
+  TIM_TimeBaseInitTypeDef TIM_TimeBaseStruct;
+  TIM_TimeBaseStruct.TIM_Period = 2500 - 1 ;  //250ms  --> 4Hz
+  TIM_TimeBaseStruct.TIM_Prescaler = 9 - 1; // Prescaled by 1800 -> = 0.1M(10us)
+  TIM_TimeBaseStruct.TIM_ClockDivision = TIM_CKD_DIV1; // Div by one -> 90 MHz (Now RCC_DCKCFGR_TIMPRE is configured to divide clock by two)
+  TIM_TimeBaseStruct.TIM_CounterMode = TIM_CounterMode_Down;
+
+  TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStruct);
+  TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+  TIM_Cmd(TIM4, ENABLE);
+}
+
 void DMA2_stream0_channel3_init(void)
 {
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
+  /* GPIOA clock enable */
+
   DMA_DeInit(DMA2_Stream0);
   DMA_InitTypeDef DMA_InitStruct;
   DMA_StructInit(&DMA_InitStruct);
@@ -105,7 +133,7 @@ void DMA2_stream0_channel3_init(void)
   DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
   DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-  DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;
+  DMA_InitStruct.DMA_Mode = DMA_Mode_Circular;
   DMA_InitStruct.DMA_Priority = DMA_Priority_High;
   DMA_InitStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
   DMA_InitStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;

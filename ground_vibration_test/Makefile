@@ -78,6 +78,7 @@ OBJS=	./system_stm32f4xx.o \
         $(ST)/src/stm32f4xx_spi.o \
         $(ST)/src/stm32f4xx_usart.o \
         $(ST)/src/stm32f4xx_dma.o \
+        $(ST)/src/stm32f4xx_tim.o \
         ../Common/fonts.o \
         $(STM32F429_LIB)/stm32f429i_discovery_lcd.o \
         $(STM32F429_LIB)/stm32f429i_discovery_sdram.o \

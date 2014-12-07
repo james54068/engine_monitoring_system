@@ -67,13 +67,9 @@ int main(void)
   system_stm32f4xx.c file
   */      
   MCU_initialization();
-  SysTick_cfg();
   MPU9250_Config(SPI1);
   MPU9250_Init(SPI1);
-  DMA2_stream0_channel3_init();
-  SPI_I2S_DMACmd(SPI1,SPI_DMAReq_Rx,ENABLE);
-
-
+  //SPI_I2S_DMACmd(SPI1,SPI_DMAReq_Rx,ENABLE);
   /* LCD initialization */
   //LCD_Init();
   
@@ -99,29 +95,30 @@ u8        ReadBuf[14];
 int16_t   AccelGyro[7];
   while (1)
   {
- 
-      //k = DMA_GetCmdStatus(DMA2_Stream0);
-      //printf("%d\r\n",k);
-      DMA_Cmd(DMA2_Stream0,ENABLE);
       
-      GPIO_ResetBits(GPIOA,GPIO_Pin_4);
-      SPIx_WriteByte(SPI1, 0x80 | MPU6500_ACCEL_XOUT_H); 
+    //   GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
+    //   DMA_Cmd(DMA2_Stream0,ENABLE);
       
-      for(k=0;k<16;k++)
-      {   
-          SPIx_WriteByte(SPI1,0xFF);
-      }
+    //   GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+    //   SPIx_WriteByte(SPI1, 0x80 | MPU6500_ACCEL_XOUT_H); 
+      
+    //   for(k=0;k<16;k++)
+    //   {   
+    //       SPIx_WriteByte(SPI1,0xFF);
+    //   }
  
-      GPIO_SetBits(GPIOA,GPIO_Pin_4);
+    //   GPIO_SetBits(GPIOA,GPIO_Pin_4);
 
-      int i=0; 
-      for(i=1; i<4; i++) 
-      AccelGyro[i]=((s16)((u16)mpu6500_buf[2*i] << 8) + mpu6500_buf[2*i+1]);
-      /* Get Angular rate */
-      for(i=5; i<8; i++)
-      AccelGyro[i-1]=((s16)((u16)mpu6500_buf[2*i] << 8) + mpu6500_buf[2*i+1]);
-      //printf("%d,%d,%d,%d,%d,%d\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2],AccelGyro[3],AccelGyro[4],AccelGyro[5]);
-    printf("%d,%d,%d,%d,%d,%d\r\n",AccelGyro[1],AccelGyro[2],AccelGyro[3],AccelGyro[4],AccelGyro[5],AccelGyro[6]);
+    //   //MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, &mpu6500_buf, 14);
+
+    //   int i=0; 
+    //   for(i=1; i<4; i++) 
+    //   AccelGyro[i]=((s16)((u16)mpu6500_buf[2*i] << 8) + mpu6500_buf[2*i+1]);
+    //   /* Get Angular rate */
+    //   for(i=5; i<8; i++)
+    //   AccelGyro[i-1]=((s16)((u16)mpu6500_buf[2*i] << 8) + mpu6500_buf[2*i+1]);
+    //   //printf("%d,%d,%d,%d,%d,%d\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2],AccelGyro[3],AccelGyro[4],AccelGyro[5]);
+    // printf("%d,%d,%d\r\n",AccelGyro[1],AccelGyro[2],AccelGyro[3]);
   }
   
 }
