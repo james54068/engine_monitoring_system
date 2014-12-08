@@ -21,10 +21,24 @@
 /*====================================================================================================*/
 void MPU9250_ReadReg(SPI_TypeDef* SPIx, u8 ReadAddr, u8 *ReadData )
 {
-	GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+	if(SPIx == SPI1)
+	{
+		GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+	}
+	else if(SPIx == SPI4)
+	{
+		GPIO_ResetBits(GPIOE,GPIO_Pin_4);
+	}
 	SPIx_ReadWriteByte(SPIx, 0x80 | ReadAddr);
 	*ReadData = SPIx_ReadWriteByte(SPIx, 0xFF);
-	GPIO_SetBits(GPIOA,GPIO_Pin_4);
+	if(SPIx == SPI1)
+	{
+		GPIO_SetBits(GPIOA,GPIO_Pin_4);
+	}
+	else if(SPIx == SPI4)
+	{
+		GPIO_SetBits(GPIOE,GPIO_Pin_4);
+	}
 }
 /*====================================================================================================*/
 /*====================================================================================================*
@@ -37,10 +51,24 @@ void MPU9250_ReadReg(SPI_TypeDef* SPIx, u8 ReadAddr, u8 *ReadData )
 /*====================================================================================================*/
 void MPU9250_WriteReg(SPI_TypeDef* SPIx, u8 WriteAddr, u8 WriteData )
 {
-	GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+	if(SPIx == SPI1)
+	{
+		GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+	}
+	else if(SPIx == SPI4)
+	{
+		GPIO_ResetBits(GPIOE,GPIO_Pin_4);
+	}
 	SPIx_ReadWriteByte(SPIx, WriteAddr);
 	SPIx_ReadWriteByte(SPIx, WriteData);
-	GPIO_SetBits(GPIOA,GPIO_Pin_4);
+	if(SPIx == SPI1)
+	{
+		GPIO_SetBits(GPIOA,GPIO_Pin_4);
+	}
+	else if(SPIx == SPI4)
+	{
+		GPIO_SetBits(GPIOE,GPIO_Pin_4);
+	}
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -54,12 +82,26 @@ void MPU9250_WriteReg(SPI_TypeDef* SPIx, u8 WriteAddr, u8 WriteData )
 void MPU9250_ReadRegs(SPI_TypeDef* SPIx, u8 ReadAddr, u8 *ReadBuf, u8 Bytes )
 {
 	u8 i = 0;
-	GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+	if(SPIx == SPI1)
+	{
+		GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+	}
+	else if(SPIx == SPI4)
+	{
+		GPIO_ResetBits(GPIOE,GPIO_Pin_4);
+	}
 	//Delay_us(1);
 	SPIx_ReadWriteByte(SPIx, 0x80 | ReadAddr);
 	for(i=0; i<Bytes; i++)
 	ReadBuf[i] = SPIx_ReadWriteByte(SPIx, 0xFF);
-	GPIO_SetBits(GPIOA,GPIO_Pin_4);
+	if(SPIx == SPI1)
+	{
+		GPIO_SetBits(GPIOA,GPIO_Pin_4);
+	}
+	else if(SPIx == SPI4)
+	{
+		GPIO_SetBits(GPIOE,GPIO_Pin_4);
+	}
 }
 /*====================================================================================================*/
 /*====================================================================================================*
@@ -74,27 +116,58 @@ void MPU9250_Config(SPI_TypeDef* SPIx)
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
 	SPI_InitTypeDef SPI_InitStruct;
-/* SPI Clk Init ************************************************************/
+
+	if(SPIx == SPI1)
+	{
+	/* SPI1 Clk Init ************************************************************/
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
-/* SPI AF ******************************************************************/
+	/* SPI AF ******************************************************************/
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource5, GPIO_AF_SPI1);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_SPI1);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_SPI1);
-/* CSM PA4 */
+	/* CSM PA4 */
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_4;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStruct.GPIO_OType = GPIO_Mode_OUT;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStruct);
-/* SCK PA5 PA6 PA7*/
+	/* SCK PA5 PA6 PA7*/
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStruct);
+	}
+	else if(SPIx == SPI4)
+	{
+	/* SPI4 Clk Init ************************************************************/
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI4, ENABLE);
+	/* SPI AF ******************************************************************/
+	GPIO_PinAFConfig(GPIOE, GPIO_PinSource2, GPIO_AF_SPI4);
+	GPIO_PinAFConfig(GPIOE, GPIO_PinSource5, GPIO_AF_SPI4);
+	GPIO_PinAFConfig(GPIOE, GPIO_PinSource6, GPIO_AF_SPI4);
+
+	/* CSM PE4 */
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStruct.GPIO_OType = GPIO_Mode_OUT;
+	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOE, &GPIO_InitStruct);
+	/* SCK PE5 PE6 PE2*/
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_2;
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+	}
+
 
 /* SPI Init ****************************************************************/
 	SPI_InitStruct.SPI_Direction = SPI_Direction_2Lines_FullDuplex; // Full Duplex
@@ -103,7 +176,7 @@ void MPU9250_Config(SPI_TypeDef* SPIx)
 	SPI_InitStruct.SPI_CPOL = SPI_CPOL_High; // Transitioned On The Falling Edge
 	SPI_InitStruct.SPI_CPHA = SPI_CPHA_2Edge; // Latched On the Rising Edge
 	SPI_InitStruct.SPI_NSS = SPI_NSS_Soft; // Software NSS Signal
-	SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2; // fsck = APB2 90MHz / 2 = 45MHz
+	SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4; // fsck = APB2 90MHz / 2 = 45MHz
 	SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB; // MSB First
 	SPI_InitStruct.SPI_CRCPolynomial = 7;
 	SPI_Init(SPIx, &SPI_InitStruct);

@@ -69,19 +69,17 @@ int main(void)
   MCU_initialization();
   MPU9250_Config(SPI1);
   MPU9250_Init(SPI1);
+  MPU9250_Config(SPI4);
+  MPU9250_Init(SPI4);
   //SPI_I2S_DMACmd(SPI1,SPI_DMAReq_Rx,ENABLE);
   /* LCD initialization */
-  //LCD_Init();
-  
+  //LCD_Init(); 
   /* LCD Layer initialization */
-  //LCD_LayerInit();
-    
+  //LCD_LayerInit();    
   /* Enable the LTDC */
   //LTDC_Cmd(ENABLE);
-  
   /* Set LCD foreground layer */
-  //LCD_SetLayer(LCD_FOREGROUND_LAYER);
-  
+  //LCD_SetLayer(LCD_FOREGROUND_LAYER);  
   /* Clear the LCD */ 
 /*
   LCD_SetFont(&Font8x12);
@@ -90,35 +88,28 @@ int main(void)
   LCD_DisplayStringLine(LINE(3), (uint8_t*)" -------------------");
   LCD_DisplayStringLine(LINE(4), (uint8_t*)" !@#$%%^&*()_+)(*&^%%$#$%%^&*");
 */
-u8        k = 0;
-u8        ReadBuf[14];
-int16_t   AccelGyro[7];
+    int k=0;
+    int16_t   buff[10];
+    int16_t   AccelGyroA[7];
+    int16_t   AccelGyroB[7];
+    int16_t   temperature;
   while (1)
   {
       
-    //   GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
-    //   DMA_Cmd(DMA2_Stream0,ENABLE);
-      
-    //   GPIO_ResetBits(GPIOA,GPIO_Pin_4);
-    //   SPIx_WriteByte(SPI1, 0x80 | MPU6500_ACCEL_XOUT_H); 
-      
-    //   for(k=0;k<16;k++)
-    //   {   
-    //       SPIx_WriteByte(SPI1,0xFF);
-    //   }
- 
-    //   GPIO_SetBits(GPIOA,GPIO_Pin_4);
+      GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
 
-    //   //MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, &mpu6500_buf, 14);
+      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, &mpu6500A_buf, 6);
+      MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, &mpu6500B_buf, 8);
 
-    //   int i=0; 
-    //   for(i=1; i<4; i++) 
-    //   AccelGyro[i]=((s16)((u16)mpu6500_buf[2*i] << 8) + mpu6500_buf[2*i+1]);
-    //   /* Get Angular rate */
-    //   for(i=5; i<8; i++)
-    //   AccelGyro[i-1]=((s16)((u16)mpu6500_buf[2*i] << 8) + mpu6500_buf[2*i+1]);
-    //   //printf("%d,%d,%d,%d,%d,%d\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2],AccelGyro[3],AccelGyro[4],AccelGyro[5]);
-    // printf("%d,%d,%d\r\n",AccelGyro[1],AccelGyro[2],AccelGyro[3]);
+      int i=0; 
+      for(i=0; i<3; i++) 
+      AccelGyroA[i]=((s16)((u16)mpu6500A_buf[2*i] << 8) + mpu6500A_buf[2*i+1]);
+      for(i=0; i<4; i++) 
+      AccelGyroB[i]=((s16)((u16)mpu6500B_buf[2*i] << 8) + mpu6500B_buf[2*i+1]);
+      temperature = (AccelGyroB[3]-21)/333 + 21;
+      //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
+      sprintf(buff,"%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature);
+      USART1_puts(buff);
   }
   
 }

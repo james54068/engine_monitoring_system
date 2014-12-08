@@ -3,7 +3,8 @@
 
 #include "stm32f4xx.h"
 
-extern uint8_t mpu6500_buf[16];
+extern uint8_t mpu6500A_buf[16];
+extern uint8_t mpu6500B_buf[16];
 
 void MCU_initialization(void);
 void RCC_Configuration(void);

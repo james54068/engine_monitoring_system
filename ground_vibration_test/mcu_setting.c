@@ -1,7 +1,8 @@
 #include "mcu_setting.h"
 #include "stm32f4xx.h"
 
-uint8_t mpu6500_buf[16];
+uint8_t mpu6500A_buf[16];
+uint8_t mpu6500B_buf[16];
 
 void MCU_initialization(void)
 {
@@ -29,7 +30,7 @@ void GPIO_Configuration(void)
     GPIO_InitTypeDef GPIO_InitStructure;
 
     /*-------------------------- GPIO Configuration for Push Button ----------------------------*/
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
@@ -126,7 +127,7 @@ void DMA2_stream0_channel3_init(void)
 
   DMA_InitStruct.DMA_Channel = DMA_Channel_3;
   DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t)&SPI1->DR;
-  DMA_InitStruct.DMA_Memory0BaseAddr = (uint32_t)mpu6500_buf;
+  DMA_InitStruct.DMA_Memory0BaseAddr = (uint32_t)mpu6500A_buf;
   DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralToMemory;
   DMA_InitStruct.DMA_BufferSize = 16;
   DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
