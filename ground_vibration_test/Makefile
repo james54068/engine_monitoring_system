@@ -87,6 +87,7 @@ OBJS=	./system_stm32f4xx.o \
         ./mpu6500.o \
         ./mcu_setting.o \
         ./stm32f4xx_it.o \
+        ./functions.o \
         $(STARTUP) 
         
 #Make all

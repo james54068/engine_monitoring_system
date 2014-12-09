@@ -7,6 +7,11 @@ u8        mpu6500B_buf[16];
 char      buff[50];
 uint8_t   hh[100]="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa12345\r\n";
 
+int8_t    buff_size;
+int16_t   AccelGyroA[7];
+int16_t   AccelGyroB[7];
+int16_t   temperature;
+
 void MCU_initialization(void)
 {
     SysTick_cfg();
@@ -149,7 +154,7 @@ void DMA2_stream0_channel3_init(void)
   DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
   DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;
   DMA_InitStruct.DMA_Priority = DMA_Priority_High;
-  DMA_InitStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
+  DMA_InitStruct.DMA_FIFOMode = DMA_FIFOMode_Enable;
   DMA_InitStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
   DMA_InitStruct.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStruct.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
@@ -209,7 +214,7 @@ void send_byte(uint8_t b)
   while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
 }
 
-/*int _write (int fd, char *ptr, int len)
+int _write (int fd, char *ptr, int len)
 {
    // Write "len" of char from "ptr" to file id "fd"
    // * Return number of char written.
@@ -222,7 +227,7 @@ void send_byte(uint8_t b)
     ptr++;
   }
   return len;
-}*/
+}
 
 
 

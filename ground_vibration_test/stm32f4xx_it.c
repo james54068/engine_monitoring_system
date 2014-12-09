@@ -32,6 +32,7 @@
 #include "main.h"
 #include "mpu6500.h"
 #include "mcu_setting.h"
+#include "functions.h"
     
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{

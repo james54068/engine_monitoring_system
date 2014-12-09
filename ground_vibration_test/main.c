@@ -31,21 +31,7 @@
 #include "main.h"
 #include "mpu6500.h"
 #include "mcu_setting.h"
-
-
-int TimingDelay;
-
-void Delay_us(int nTime)
-{ 
-    // 將 nTime 傳給 TimingDelay，之後讓 TimingDelay 遞減
-    TimingDelay = nTime;
- 
-    // 等待 SysTick_Handler() 中斷涵式
-    // 把 TimingDelay 減到 0 才跳出迴圈
-    // TimingDelay 非零將會一直空轉
-    while(TimingDelay != 0);
-}
-
+#include "functions.h"
 int main(void)
 {
    
@@ -60,10 +46,10 @@ int main(void)
   MPU9250_Init(SPI1);
   MPU9250_Config(SPI4);
   MPU9250_Init(SPI4);
-  
-
-  
-
+  initial_AccGyro(1);
+  Delay_us(5000000);
+  initial_AccGyro(2);
+  Delay_us(5000000);
 
   /* LCD initialization */
   //LCD_Init(); 
@@ -81,10 +67,7 @@ int main(void)
   LCD_DisplayStringLine(LINE(3), (uint8_t*)" -------------------");
   LCD_DisplayStringLine(LINE(4), (uint8_t*)" !@#$%%^&*()_+)(*&^%%$#$%%^&*");
 */
-    int8_t    buff_size;
-    int16_t   AccelGyroA[7];
-    int16_t   AccelGyroB[7];
-    int16_t   temperature;
+
   while (1)
   {
       
@@ -98,6 +81,22 @@ int main(void)
       for(i=0; i<4; i++) 
       AccelGyroB[i]=((s16)((u16)mpu6500B_buf[2*i] << 8) + mpu6500B_buf[2*i+1]);
       temperature = (AccelGyroB[3]-21)/333 + 21;
+      
+      AccelGyroA[0] -= acc1_offset[0];
+      AccelGyroA[1] -= acc1_offset[1];
+      AccelGyroA[2] += acc1_offset[2];
+      AccelGyroB[0] -= acc2_offset[0];
+      AccelGyroB[1] -= acc2_offset[1];
+      AccelGyroB[2] += acc2_offset[2];
+
+      AccelGyroA[0] = - AccelGyroA[0];
+      AccelGyroA[1] = - AccelGyroA[1];
+      AccelGyroA[2] = - AccelGyroA[2];
+      AccelGyroB[0] = - AccelGyroB[0];
+      AccelGyroB[1] = - AccelGyroB[1];
+      AccelGyroB[2] = - AccelGyroB[2];
+    
+    
       //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
       sprintf(buff,"%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature);
       buff_size = strlen(buff);

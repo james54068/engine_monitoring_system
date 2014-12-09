@@ -7,6 +7,12 @@ extern u8 	mpu6500A_buf[16];
 extern u8	mpu6500B_buf[16];
 extern char 	buff[50];
 
+extern    int8_t    buff_size;
+extern    int16_t   AccelGyroA[7];
+extern    int16_t   AccelGyroB[7];
+extern    int16_t   temperature;
+
+
 
 void MCU_initialization(void);
 void SysTick_cfg(void);
@@ -19,7 +25,7 @@ void DMA2_stream0_channel3_init(void);
 void DMA2_stream7_channel4_init(void);
 void USART1_puts(char* s);
 void send_byte(uint8_t b);
-//int _write (int fd, char *ptr, int len);
+int _write (int fd, char *ptr, int len);
 
 
 #endif
