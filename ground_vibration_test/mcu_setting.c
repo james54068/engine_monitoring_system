@@ -16,7 +16,6 @@ void MCU_initialization(void)
 {
     SysTick_cfg();
     GPIO_Configuration();
-    NVIC_configuration();
     USART1_Configuration();  
     Timer4_Initialization();
     DMA2_stream7_channel4_init();
@@ -124,7 +123,7 @@ void Timer4_Initialization(void)
   /* -- Timer Configuration --------------------------------------------------- */
   TIM_DeInit(TIM4);
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStruct;
-  TIM_TimeBaseStruct.TIM_Period = 2500 - 1 ;  //250ms  --> 4Hz
+  TIM_TimeBaseStruct.TIM_Period = 5000 - 1 ;  //250ms  --> 4Hz
   TIM_TimeBaseStruct.TIM_Prescaler = 9 - 1; // Prescaled by 1800 -> = 0.1M(10us)
   TIM_TimeBaseStruct.TIM_ClockDivision = TIM_CKD_DIV1; // Div by one -> 90 MHz (Now RCC_DCKCFGR_TIMPRE is configured to divide clock by two)
   TIM_TimeBaseStruct.TIM_CounterMode = TIM_CounterMode_Down;
