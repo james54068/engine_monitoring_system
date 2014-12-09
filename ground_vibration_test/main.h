@@ -37,7 +37,7 @@
 #include "stm32f429i_discovery_ioe.h"
 
 
- void SysTick_cfg(void);
+ 
  void Delay_us(int nTime);
 /* Private define ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/

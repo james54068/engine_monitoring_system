@@ -171,6 +171,17 @@ void DMA2_Stream0_IRQHandler(void)
   
 }
 
+void DMA2_Stream7_IRQHandler(void)
+{
+  if(DMA_GetFlagStatus(DMA2_Stream7,DMA_IT_TCIF7)==SET)
+  {
+    //GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
+    DMA_Cmd(DMA2_Stream7,DISABLE);
+    //DMA_ClearFlag(DMA2_Stream7,DMA_IT_TCIF7);
+    DMA_ClearITPendingBit(DMA2_Stream7,DMA_IT_TCIF7); 
+  }  
+}
+
 void TIM4_IRQHandler()
 {
   if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET){

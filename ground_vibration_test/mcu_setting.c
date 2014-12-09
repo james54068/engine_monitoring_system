@@ -1,8 +1,11 @@
+#include <string.h>
 #include "mcu_setting.h"
 #include "stm32f4xx.h"
 
-uint8_t mpu6500A_buf[16];
-uint8_t mpu6500B_buf[16];
+u8        mpu6500A_buf[16];
+u8        mpu6500B_buf[16];
+char      buff[50];
+uint8_t   hh[100]="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa12345\r\n";
 
 void MCU_initialization(void)
 {
@@ -11,9 +14,19 @@ void MCU_initialization(void)
     NVIC_configuration();
     USART1_Configuration();  
     Timer4_Initialization();
-    DMA2_stream0_channel3_init();
+    DMA2_stream7_channel4_init();
   
 }
+
+ void SysTick_cfg(void)
+{
+  if (SysTick_Config(SystemCoreClock/1000000))
+  { 
+    /* Capture error */ 
+    while (1);
+  }
+} 
+
 
 void RCC_Configuration(void)
 {
@@ -56,8 +69,8 @@ void NVIC_configuration(void)
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
   /*preemption:2 sub:8*/
 
-  /*DMA2 Stream0 Interrupt */
-  NVIC_InitStruct.NVIC_IRQChannel = DMA2_Stream0_IRQn;
+  /*DMA2 Stream7 Interrupt */
+  NVIC_InitStruct.NVIC_IRQChannel = DMA2_Stream7_IRQn;
   NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0; 
   NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
@@ -134,7 +147,7 @@ void DMA2_stream0_channel3_init(void)
   DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
   DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-  DMA_InitStruct.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;
   DMA_InitStruct.DMA_Priority = DMA_Priority_High;
   DMA_InitStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
   DMA_InitStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
@@ -148,8 +161,33 @@ void DMA2_stream0_channel3_init(void)
 
 void DMA2_stream7_channel4_init(void)
 {
+   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
+  /* GPIOA clock enable */
 
-  
+  DMA_DeInit(DMA2_Stream7);
+  DMA_InitTypeDef DMA_InitStruct;
+  DMA_StructInit(&DMA_InitStruct);
+
+  DMA_InitStruct.DMA_Channel = DMA_Channel_4;
+  DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t)&USART1->DR;
+  DMA_InitStruct.DMA_Memory0BaseAddr = (uint32_t)buff;
+  DMA_InitStruct.DMA_DIR = DMA_DIR_MemoryToPeripheral;
+  DMA_InitStruct.DMA_BufferSize = 50;
+  DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+  DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+  DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;
+  DMA_InitStruct.DMA_Priority = DMA_Priority_High;
+  DMA_InitStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
+  DMA_InitStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
+  DMA_InitStruct.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+  DMA_InitStruct.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+
+  DMA_Init(DMA2_Stream7,&DMA_InitStruct);
+  DMA_Cmd(DMA2_Stream7,ENABLE);
+  DMA_ITConfig(DMA2_Stream7,DMA_IT_TC,ENABLE);
+   
 }
 
 
@@ -171,11 +209,12 @@ void send_byte(uint8_t b)
   while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
 }
 
-int _write (int fd, char *ptr, int len)
+/*int _write (int fd, char *ptr, int len)
 {
-  /* Write "len" of char from "ptr" to file id "fd"
-   * Return number of char written.
-   * Need implementing with UART here. */
+   // Write "len" of char from "ptr" to file id "fd"
+   // * Return number of char written.
+   // * Need implementing with UART here. 
+  //fd = 1;
   int i = 0;
   for ( i = 0; i<len ;i++)
   {
@@ -183,7 +222,7 @@ int _write (int fd, char *ptr, int len)
     ptr++;
   }
   return len;
-}
+}*/
 
 
 

@@ -294,5 +294,6 @@ u8 SPIx_WriteByte(SPI_TypeDef* SPIx, u8 TxData)
 		}			  
 
 	SPI_I2S_SendData(SPIx, TxData);	
+	return 0;
 	
 }

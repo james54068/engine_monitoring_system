@@ -27,21 +27,13 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include <string.h>  
 #include "main.h"
 #include "mpu6500.h"
 #include "mcu_setting.h"
 
+
 int TimingDelay;
-
- void SysTick_cfg(void)
-{
-  if (SysTick_Config(SystemCoreClock/1000000))
-  { 
-    /* Capture error */ 
-    while (1);
-  }
-} 
-
 
 void Delay_us(int nTime)
 { 
@@ -56,10 +48,7 @@ void Delay_us(int nTime)
 
 int main(void)
 {
-
-  //char lcd_text_buff[100];
-  //uint32_t test_int32 =0;
-    
+   
   /*!< At this stage the microcontroller clock setting is already configured, 
   this is done through SystemInit() function which is called from startup
   file (startup_stm32f429_439xx.s) before to branch to application main.
@@ -71,7 +60,11 @@ int main(void)
   MPU9250_Init(SPI1);
   MPU9250_Config(SPI4);
   MPU9250_Init(SPI4);
-  //SPI_I2S_DMACmd(SPI1,SPI_DMAReq_Rx,ENABLE);
+  
+
+  
+
+
   /* LCD initialization */
   //LCD_Init(); 
   /* LCD Layer initialization */
@@ -88,8 +81,7 @@ int main(void)
   LCD_DisplayStringLine(LINE(3), (uint8_t*)" -------------------");
   LCD_DisplayStringLine(LINE(4), (uint8_t*)" !@#$%%^&*()_+)(*&^%%$#$%%^&*");
 */
-    int k=0;
-    int16_t   buff[10];
+    int8_t    buff_size;
     int16_t   AccelGyroA[7];
     int16_t   AccelGyroB[7];
     int16_t   temperature;
@@ -97,9 +89,8 @@ int main(void)
   {
       
       GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
-
-      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, &mpu6500A_buf, 6);
-      MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, &mpu6500B_buf, 8);
+      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 6);
+      MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, mpu6500B_buf, 8);
 
       int i=0; 
       for(i=0; i<3; i++) 
@@ -109,7 +100,15 @@ int main(void)
       temperature = (AccelGyroB[3]-21)/333 + 21;
       //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
       sprintf(buff,"%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature);
-      USART1_puts(buff);
+      buff_size = strlen(buff);
+      DMA2_Stream7->NDTR = buff_size ;
+      USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
+      DMA_Cmd(DMA2_Stream7,ENABLE);         
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET);
+ 
+      USART_DMACmd(USART1,USART_DMAReq_Tx,DISABLE);
+
+       //USART1_puts(buff);
   }
   
 }
