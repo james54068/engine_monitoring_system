@@ -8,9 +8,9 @@ extern u8	mpu6500B_buf[16];
 extern char 	buff[50];
 
 extern    int8_t    buff_size;
-extern    int16_t   AccelGyroA[7];
-extern    int16_t   AccelGyroB[7];
-extern    int16_t   temperature;
+extern    __IO	int16_t   AccelGyroA[7];
+extern    __IO	int16_t   AccelGyroB[7];
+extern    __IO	int8_t    temperature;
 
 
 

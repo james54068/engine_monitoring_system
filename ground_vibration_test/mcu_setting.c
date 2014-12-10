@@ -8,9 +8,9 @@ char      buff[50];
 uint8_t   hh[100]="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa12345\r\n";
 
 int8_t    buff_size;
-int16_t   AccelGyroA[7];
-int16_t   AccelGyroB[7];
-int16_t   temperature;
+__IO  int16_t   AccelGyroA[7];
+__IO  int16_t   AccelGyroB[7];
+__IO  int8_t    temperature;
 
 void MCU_initialization(void)
 {

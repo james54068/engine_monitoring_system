@@ -68,10 +68,44 @@ int main(void)
   LCD_DisplayStringLine(LINE(3), (uint8_t*)" -------------------");
   LCD_DisplayStringLine(LINE(4), (uint8_t*)" !@#$%%^&*()_+)(*&^%%$#$%%^&*");
 */
-
+uint16_t rpm=8000;
   while (1)
   {
+            GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
+      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 6);
+      MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, mpu6500B_buf, 8);
+
+      int i=0; 
+      for(i=0; i<3; i++) 
+      AccelGyroA[i]=((s16)((u16)mpu6500A_buf[2*i] << 8) + mpu6500A_buf[2*i+1]);
+      for(i=0; i<4; i++) 
+      AccelGyroB[i]=((s16)((u16)mpu6500B_buf[2*i] << 8) + mpu6500B_buf[2*i+1]);
+      temperature = (AccelGyroB[3]-21)/333 + 21;
       
+      AccelGyroA[0] -= acc1_offset[0];
+      AccelGyroA[1] -= acc1_offset[1];
+      AccelGyroA[2] += acc1_offset[2];
+      AccelGyroB[0] -= acc2_offset[0];
+      AccelGyroB[1] -= acc2_offset[1];
+      AccelGyroB[2] += acc2_offset[2];
+
+      AccelGyroA[0] = - AccelGyroA[0];
+      AccelGyroA[1] = - AccelGyroA[1];
+      AccelGyroA[2] = - AccelGyroA[2];
+      AccelGyroB[0] = - AccelGyroB[0];
+      AccelGyroB[1] = - AccelGyroB[1];
+      AccelGyroB[2] = - AccelGyroB[2];
+    
+    
+      //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
+      sprintf(buff,"%d,%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature,rpm);
+      buff_size = strlen(buff);
+      DMA2_Stream7->NDTR = buff_size ;
+      USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
+      DMA_Cmd(DMA2_Stream7,ENABLE);         
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET);
+ 
+      USART_DMACmd(USART1,USART_DMAReq_Tx,DISABLE);
 
   }
   
