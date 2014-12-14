@@ -6,6 +6,7 @@
 extern u8 	mpu6500A_buf[16];
 extern u8	mpu6500B_buf[16];
 extern char 	buff[50];
+extern char     IMU2[30];
 
 extern    int8_t    buff_size;
 extern    __IO	int16_t   AccelGyroA[7];

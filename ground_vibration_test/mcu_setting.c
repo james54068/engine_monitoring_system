@@ -12,6 +12,8 @@ __IO  int16_t   AccelGyroA[7];
 __IO  int16_t   AccelGyroB[7];
 __IO  int8_t    temperature;
 
+char      IMU2[30];
+
 void MCU_initialization(void)
 {
     SysTick_cfg();

@@ -53,25 +53,34 @@ int main(void)
   NVIC_configuration();
 
   /* LCD initialization */
-  //LCD_Init(); 
+  LCD_Init(); 
   /* LCD Layer initialization */
-  //LCD_LayerInit();    
+  LCD_LayerInit();    
   /* Enable the LTDC */
-  //LTDC_Cmd(ENABLE);
+  LTDC_Cmd(ENABLE);
   /* Set LCD foreground layer */
-  //LCD_SetLayer(LCD_FOREGROUND_LAYER);  
-  /* Clear the LCD */ 
-/*
+  LCD_SetLayer(LCD_FOREGROUND_LAYER);  
+  /* Clear the LCD */
+  LCD_Clear(LCD_COLOR_WHITE); 
+
+  LCD_SetLayer(LCD_BACKGROUND_LAYER);
+
+  LCD_Clear(LCD_COLOR_WHITE);
+  
+  LCD_SetLayer(LCD_FOREGROUND_LAYER);
+
   LCD_SetFont(&Font8x12);
-  LCD_DisplayStringLine(LINE(1), (uint8_t*)" LCD text print example ");
-  LCD_DisplayStringLine(LINE(2), (uint8_t*)" Ming6842 @ github");
-  LCD_DisplayStringLine(LINE(3), (uint8_t*)" -------------------");
-  LCD_DisplayStringLine(LINE(4), (uint8_t*)" !@#$%%^&*()_+)(*&^%%$#$%%^&*");
-*/
-uint16_t rpm=8000;
+
+  LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
+
+
   while (1)
   {
-            GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
+      LCD_DisplayStringLine(LINE(1), (uint8_t*)IMU2);
+
+
+/*      uint16_t rpm=8000;
+      GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
       MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 6);
       MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, mpu6500B_buf, 8);
 
@@ -99,6 +108,7 @@ uint16_t rpm=8000;
     
       //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
       sprintf(buff,"%d,%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature,rpm);
+      //sprintf(IMU2,"%d \r\n",temperature);
       buff_size = strlen(buff);
       DMA2_Stream7->NDTR = buff_size ;
       USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
@@ -106,6 +116,8 @@ uint16_t rpm=8000;
       while(USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET);
  
       USART_DMACmd(USART1,USART_DMAReq_Tx,DISABLE);
+*/
+
 
   }
   
