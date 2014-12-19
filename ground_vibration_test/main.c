@@ -40,42 +40,17 @@ int main(void)
   file (startup_stm32f429_439xx.s) before to branch to application main.
   To reconfigure the default setting of SystemInit() function, refer to
   system_stm32f4xx.c file
-  */      
+  */   
+
+  lcd_int();   
   MCU_initialization();
-  MPU9250_Config(SPI1);
-  MPU9250_Init(SPI1);
-  MPU9250_Config(SPI4);
-  MPU9250_Init(SPI4);
-  initial_AccGyro(1);
-  Delay_us(5000000);
-  initial_AccGyro(2);
-  Delay_us(5000000);
+  mpu6500_int();
   NVIC_configuration();
-
-  /* LCD initialization */
-  LCD_Init(); 
-  /* LCD Layer initialization */
-  LCD_LayerInit();    
-  /* Enable the LTDC */
-  LTDC_Cmd(ENABLE);
-  /* Set LCD foreground layer */
-  LCD_SetLayer(LCD_FOREGROUND_LAYER);  
-  /* Clear the LCD */
-  LCD_Clear(LCD_COLOR_WHITE); 
-
-  LCD_SetLayer(LCD_BACKGROUND_LAYER);
-
-  LCD_Clear(LCD_COLOR_WHITE);
-  
-  LCD_SetLayer(LCD_FOREGROUND_LAYER);
-
-  LCD_SetFont(&Font8x12);
-
-  LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
-
 
   while (1)
   {
+      GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
+      sprintf(IMU2,"%d \r\n",temperature);
       LCD_DisplayStringLine(LINE(1), (uint8_t*)IMU2);
 
 

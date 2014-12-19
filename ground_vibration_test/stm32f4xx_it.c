@@ -216,7 +216,6 @@ void TIM4_IRQHandler()
     
       //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
       sprintf(buff,"%d,%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature,rpm);
-      sprintf(IMU2,"%d \r\n",temperature);
       buff_size = strlen(buff);
       DMA2_Stream7->NDTR = buff_size ;
       USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);

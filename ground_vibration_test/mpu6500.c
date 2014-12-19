@@ -24,7 +24,7 @@ void MPU9250_ReadReg(SPI_TypeDef* SPIx, u8 ReadAddr, u8 *ReadData )
 {
 	if(SPIx == SPI1)
 	{
-		GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+		GPIO_ResetBits(GPIOA,GPIO_Pin_15);
 	}
 	else if(SPIx == SPI4)
 	{
@@ -34,7 +34,7 @@ void MPU9250_ReadReg(SPI_TypeDef* SPIx, u8 ReadAddr, u8 *ReadData )
 	*ReadData = SPIx_ReadWriteByte(SPIx, 0xFF);
 	if(SPIx == SPI1)
 	{
-		GPIO_SetBits(GPIOA,GPIO_Pin_4);
+		GPIO_SetBits(GPIOA,GPIO_Pin_15);
 	}
 	else if(SPIx == SPI4)
 	{
@@ -54,7 +54,7 @@ void MPU9250_WriteReg(SPI_TypeDef* SPIx, u8 WriteAddr, u8 WriteData )
 {
 	if(SPIx == SPI1)
 	{
-		GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+		GPIO_ResetBits(GPIOA,GPIO_Pin_15);
 	}
 	else if(SPIx == SPI4)
 	{
@@ -64,7 +64,7 @@ void MPU9250_WriteReg(SPI_TypeDef* SPIx, u8 WriteAddr, u8 WriteData )
 	SPIx_ReadWriteByte(SPIx, WriteData);
 	if(SPIx == SPI1)
 	{
-		GPIO_SetBits(GPIOA,GPIO_Pin_4);
+		GPIO_SetBits(GPIOA,GPIO_Pin_15);
 	}
 	else if(SPIx == SPI4)
 	{
@@ -85,7 +85,7 @@ void MPU9250_ReadRegs(SPI_TypeDef* SPIx, u8 ReadAddr, u8 *ReadBuf, u8 Bytes )
 	u8 i = 0;
 	if(SPIx == SPI1)
 	{
-		GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+		GPIO_ResetBits(GPIOA,GPIO_Pin_15);
 	}
 	else if(SPIx == SPI4)
 	{
@@ -97,7 +97,7 @@ void MPU9250_ReadRegs(SPI_TypeDef* SPIx, u8 ReadAddr, u8 *ReadBuf, u8 Bytes )
 	ReadBuf[i] = SPIx_ReadWriteByte(SPIx, 0xFF);
 	if(SPIx == SPI1)
 	{
-		GPIO_SetBits(GPIOA,GPIO_Pin_4);
+		GPIO_SetBits(GPIOA,GPIO_Pin_15);
 	}
 	else if(SPIx == SPI4)
 	{
@@ -122,20 +122,28 @@ void MPU9250_Config(SPI_TypeDef* SPIx)
 	{
 	/* SPI1 Clk Init ************************************************************/
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
 	/* SPI AF ******************************************************************/
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource5, GPIO_AF_SPI1);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_SPI1);
+	GPIO_PinAFConfig(GPIOB, GPIO_PinSource3, GPIO_AF_SPI1);
+	GPIO_PinAFConfig(GPIOB, GPIO_PinSource4, GPIO_AF_SPI1);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_SPI1);
 	/* CSM PA4 */
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_15;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStruct.GPIO_OType = GPIO_Mode_OUT;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStruct);
 	/* SCK PA5 PA6 PA7*/
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 ;
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_7 ;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
