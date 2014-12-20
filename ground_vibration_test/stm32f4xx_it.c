@@ -184,7 +184,6 @@ void DMA2_Stream7_IRQHandler(void)
   }  
 }
 
-uint16_t rpm=8000;
 void TIM4_IRQHandler()
 {
   if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET){
@@ -216,13 +215,17 @@ void TIM4_IRQHandler()
     
       //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
       sprintf(buff,"%d,%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature,rpm);
-      buff_size = strlen(buff);
-      DMA2_Stream7->NDTR = buff_size ;
-      USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
-      DMA_Cmd(DMA2_Stream7,ENABLE);         
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET);
+      USART1_puts(buff);
+     
+
+
+      // buff_size = strlen(buff);
+      // DMA2_Stream7->NDTR = buff_size ;
+      // USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
+      // DMA_Cmd(DMA2_Stream7,ENABLE);         
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET);
  
-      USART_DMACmd(USART1,USART_DMAReq_Tx,DISABLE);
+      // USART_DMACmd(USART1,USART_DMAReq_Tx,DISABLE);
     
 
 
@@ -230,6 +233,39 @@ void TIM4_IRQHandler()
     TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
   } 
 }
+
+
+void TIM2_IRQHandler(void)  
+{
+  if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+  {
+     TIM_ClearITPendingBit(TIM2, TIM_IT_Update); 
+     rpm = 0;
+  }
+
+  if (TIM_GetITStatus(TIM2, TIM_IT_CC1) != RESET)
+  {
+  uint32_t IC2Value;
+
+  //RCC_GetClocksFreq(&RCC_Clocks);  
+  
+  /* Clear TIM2 Capture compare interrupt pending bit */  
+  TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);  
+
+  /* Get the Input Capture value */  
+  IC2Value = TIM_GetCapture1(TIM2);
+
+  rpm = (1000000/IC2Value)*60;
+  sprintf(rpm_buff,"%d",rpm);
+  // USART1_puts(rpm_buff);
+  }
+  
+
+  // else
+  // {
+  //   rpm = 0;
+  // }  
+} 
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

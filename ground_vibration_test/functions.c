@@ -38,16 +38,6 @@ void lcd_int(void)
   /* Clear the LCD */
   LCD_Clear(LCD_COLOR_WHITE); 
 
-  LCD_SetLayer(LCD_BACKGROUND_LAYER);
-
-  LCD_Clear(LCD_COLOR_WHITE);
-  
-  LCD_SetLayer(LCD_FOREGROUND_LAYER);
-
-  LCD_SetFont(&Font8x12);
-
-  LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
-
 }
 
 void mpu6500_int(void)
@@ -56,10 +46,10 @@ void mpu6500_int(void)
   	MPU9250_Init(SPI1);
   	MPU9250_Config(SPI4);
   	MPU9250_Init(SPI4);
-  	initial_AccGyro(1);
-  	Delay_us(5000000);
-  	initial_AccGyro(2);
-  	Delay_us(5000000);
+  	// initial_AccGyro(1);
+  	// Delay_us(5000000);
+  	// initial_AccGyro(2);
+  	// Delay_us(5000000);
 }
 
 void initial_AccGyro(int8_t n)

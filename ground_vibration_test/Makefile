@@ -88,6 +88,7 @@ OBJS=	./system_stm32f4xx.o \
         ./mcu_setting.o \
         ./stm32f4xx_it.o \
         ./functions.o \
+        ./drawing.o \
         $(STARTUP) 
         
 #Make all
