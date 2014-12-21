@@ -56,36 +56,36 @@ int main(void)
   LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE); 
   //Circle_Meter(120,160,100,100,-100);
   Semi_Circle_Meter(120,80,70,100,0);
-  Semi_Circle_Meter(120,200,70,8000,0);
+  Semi_Circle_Meter(120,200,70,10000,0);
 
   while (1)
   {
-      float T= 0;
+      float T,R = 0;
       GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
       sprintf(IMU2," %d ",temperature);
       LCD_SetLayer(LCD_FOREGROUND_LAYER);
       LCD_SetFont(&Font8x8);
       LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
       LCD_DisplayStringLine(LINE(0), (uint8_t*)IMU2);
+      memset(IMU2,0x00,10);  
       T = (float)temperature;
       // Draw_CircleNeedle(120,80,60,100,-100,T);
       // LCD_SetColors(LCD_COLOR_WHITE,LCD_COLOR_WHITE);
       // Draw_CircleNeedle(120,80,60,100,-100,T);
-
       Draw_SemiCircleNeedle(120,80,45,100,0,T);
       LCD_SetColors(LCD_COLOR_WHITE,LCD_COLOR_WHITE);
       Draw_SemiCircleNeedle(120,80,45,100,0,T);
-
       LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
+
+
+      sprintf(rpm_buff," %d ",rpm); 
       LCD_DisplayStringLine(LINE(15), (uint8_t*)rpm_buff);
-      Draw_SemiCircleNeedle(120,200,45,8000,0,rpm);
+      memset(rpm_buff,0x00,10);    
+      R = (float)rpm;
+      Draw_SemiCircleNeedle(120,200,45,10000,0,R);
       LCD_SetColors(LCD_COLOR_WHITE,LCD_COLOR_WHITE);
-      Draw_SemiCircleNeedle(120,200,45,8000,0,rpm);
-
-
-
-
-
+      Draw_SemiCircleNeedle(120,200,45,10000,0,R);
+      LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
 
 /*      uint16_t rpm=8000;
       GPIO_ToggleBits(GPIOA,GPIO_Pin_2);

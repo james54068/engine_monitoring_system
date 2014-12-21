@@ -162,7 +162,7 @@ void Timer2_Initialization(void)
   TIM_DeInit(TIM2);
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStruct;
   TIM_TimeBaseStruct.TIM_Period = 0xFFFF ;  //250ms  --> 4Hz
-  TIM_TimeBaseStruct.TIM_Prescaler = 90 - 1; // Prescaled by 1800 -> = 0.1M(10us)
+  TIM_TimeBaseStruct.TIM_Prescaler = 900 - 1; // Prescaled by 1800 -> = 0.1M(10us)
   TIM_TimeBaseStruct.TIM_ClockDivision = TIM_CKD_DIV1; // Div by one -> 90 MHz (Now RCC_DCKCFGR_TIMPRE is configured to divide clock by two)
   TIM_TimeBaseStruct.TIM_CounterMode = TIM_CounterMode_Up;
   //TIM_TimeBaseStruct.TIM_RepetitionCounter = 0;

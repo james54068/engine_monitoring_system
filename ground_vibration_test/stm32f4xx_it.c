@@ -242,8 +242,7 @@ void TIM2_IRQHandler(void)
      TIM_ClearITPendingBit(TIM2, TIM_IT_Update); 
      rpm = 0;
   }
-
-  if (TIM_GetITStatus(TIM2, TIM_IT_CC1) != RESET)
+  else if (TIM_GetITStatus(TIM2, TIM_IT_CC1) != RESET)
   {
   uint32_t IC2Value;
 
@@ -255,16 +254,13 @@ void TIM2_IRQHandler(void)
   /* Get the Input Capture value */  
   IC2Value = TIM_GetCapture1(TIM2);
 
-  rpm = (1000000/IC2Value)*60;
-  sprintf(rpm_buff,"%d",rpm);
+  rpm = (100000/IC2Value)*60;
+
+  //TIM_SetAutoreload(TIM2,0);
+  //sprintf(rpm_buff,"%d",rpm);
   // USART1_puts(rpm_buff);
   }
-  
 
-  // else
-  // {
-  //   rpm = 0;
-  // }  
 } 
 
 

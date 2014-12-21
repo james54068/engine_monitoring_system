@@ -3,18 +3,18 @@
 
 #include "stm32f4xx.h"
 
-extern u8 	mpu6500A_buf[16];
-extern u8	mpu6500B_buf[16];
+extern u8 		mpu6500A_buf[16];
+extern u8		mpu6500B_buf[16];
 extern char 	buff[50];
 
 
-extern  __IO  char    IMU2[10];
-extern 	__IO  char    rpm_buff[10];
-extern    int8_t    buff_size;
-extern    __IO	int16_t   AccelGyroA[7];
-extern    __IO	int16_t   AccelGyroB[7];
-extern    __IO	int8_t    temperature;
-extern    __IO  uint16_t  rpm;
+extern  __IO  	char    	IMU2[10];
+extern 	__IO  	char    	rpm_buff[10];
+extern    		int8_t    	buff_size;
+extern  __IO	int16_t   	AccelGyroA[7];
+extern  __IO	int16_t   	AccelGyroB[7];
+extern  __IO	int8_t    	temperature;
+extern  __IO  	uint16_t  	rpm;
 
 
 
