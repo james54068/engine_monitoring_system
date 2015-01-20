@@ -43,12 +43,12 @@ int main(void)
   system_stm32f4xx.c file
   */   
 
-  lcd_int();   
+  // lcd_int();   
   MCU_initialization();
   mpu6500_int();
   NVIC_configuration();
   
-  LCD_SetLayer(LCD_FOREGROUND_LAYER);
+/*  LCD_SetLayer(LCD_FOREGROUND_LAYER);
   LCD_SetFont(&Font8x12);
   LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
 
@@ -56,12 +56,12 @@ int main(void)
   //Circle_Meter(120,160,100,100,-100);
   Semi_Circle_Meter(120,80,70,100,0);
   Semi_Circle_Meter(120,170,70,10000,0);
-  XY_axis(20,300,100,0,100,0);
+  XY_axis(20,300,100,0,100,0);*/
 
   while (1)
   {
-      float T,R = 0;
-      // GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
+    // USART1_puts(0xAA);
+/*      float T,R = 0;
       sprintf(IMU2," %d ",temperature);
       LCD_SetLayer(LCD_FOREGROUND_LAYER);
       LCD_SetFont(&Font8x8);
@@ -69,15 +69,10 @@ int main(void)
       LCD_DisplayStringLine(LINE(0), (uint8_t*)IMU2);
       memset(IMU2,0x00,10);  
       T = (float)temperature;
-      // Draw_CircleNeedle(120,80,60,100,-100,T);
-      // LCD_SetColors(LCD_COLOR_WHITE,LCD_COLOR_WHITE);
-      // Draw_CircleNeedle(120,80,60,100,-100,T);
       Draw_SemiCircleNeedle(120,80,45,100,0,T);
       LCD_SetColors(LCD_COLOR_WHITE,LCD_COLOR_WHITE);
       Draw_SemiCircleNeedle(120,80,45,100,0,T);
       LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
-
-
       sprintf(rpm_buff," %d ",rpm); 
       LCD_DisplayStringLine(LINE(13), (uint8_t*)rpm_buff);
       memset(rpm_buff,0x00,10);    
@@ -85,47 +80,7 @@ int main(void)
       Draw_SemiCircleNeedle(120,170,45,10000,0,R);
       LCD_SetColors(LCD_COLOR_WHITE,LCD_COLOR_WHITE);
       Draw_SemiCircleNeedle(120,170,45,10000,0,R);
-      LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
-
-/*      uint16_t rpm=8000;
-      GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
-      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 6);
-      MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, mpu6500B_buf, 8);
-
-      int i=0; 
-      for(i=0; i<3; i++) 
-      AccelGyroA[i]=((s16)((u16)mpu6500A_buf[2*i] << 8) + mpu6500A_buf[2*i+1]);
-      for(i=0; i<4; i++) 
-      AccelGyroB[i]=((s16)((u16)mpu6500B_buf[2*i] << 8) + mpu6500B_buf[2*i+1]);
-      temperature = (AccelGyroB[3]-21)/333 + 21;
-      
-      AccelGyroA[0] -= acc1_offset[0];
-      AccelGyroA[1] -= acc1_offset[1];
-      AccelGyroA[2] += acc1_offset[2];
-      AccelGyroB[0] -= acc2_offset[0];
-      AccelGyroB[1] -= acc2_offset[1];
-      AccelGyroB[2] += acc2_offset[2];
-
-      AccelGyroA[0] = - AccelGyroA[0];
-      AccelGyroA[1] = - AccelGyroA[1];
-      AccelGyroA[2] = - AccelGyroA[2];
-      AccelGyroB[0] = - AccelGyroB[0];
-      AccelGyroB[1] = - AccelGyroB[1];
-      AccelGyroB[2] = - AccelGyroB[2];
-    
-    
-      //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
-      sprintf(buff,"%d,%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature,rpm);
-      //sprintf(IMU2,"%d \r\n",temperature);
-      buff_size = strlen(buff);
-      DMA2_Stream7->NDTR = buff_size ;
-      USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
-      DMA_Cmd(DMA2_Stream7,ENABLE);         
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET);
- 
-      USART_DMACmd(USART1,USART_DMAReq_Tx,DISABLE);
-*/
-
+      LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);*/
 
   }
   

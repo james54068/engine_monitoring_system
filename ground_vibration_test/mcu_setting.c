@@ -22,9 +22,9 @@ void MCU_initialization(void)
     GPIO_Configuration();
     USART1_Configuration();  
     Timer4_Initialization();
-    Timer2_Initialization();
-    Timer2_Channel_init();
-    DMA2_stream7_channel4_init();
+    Timer3_Initialization();
+    Timer3_Channel_init();
+    // DMA2_stream7_channel4_init();
   
 }
 
@@ -50,6 +50,7 @@ void GPIO_Configuration(void)
 {
     /* GPIOA clock enable */
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
     GPIO_InitTypeDef GPIO_InitStructure;
 
     /*-------------------------- GPIO Configuration for Push Button ----------------------------*/
@@ -60,6 +61,13 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_8;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
     /*check connection*/
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
@@ -88,11 +96,11 @@ void NVIC_configuration(void)
   /*preemption:2 sub:8*/
 
   /*DMA2 Stream7 Interrupt */
-  NVIC_InitStruct.NVIC_IRQChannel = DMA2_Stream7_IRQn;
-  NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0; 
-  NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
-  NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStruct);
+  // NVIC_InitStruct.NVIC_IRQChannel = DMA2_Stream7_IRQn;
+  // NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0; 
+  // NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
+  // NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+  // NVIC_Init(&NVIC_InitStruct);
 
   /*TIM4 global Interrupt */
   NVIC_InitStruct.NVIC_IRQChannel =  TIM4_IRQn ;
@@ -101,7 +109,7 @@ void NVIC_configuration(void)
   NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStruct);
 
-  NVIC_InitStruct.NVIC_IRQChannel = TIM2_IRQn;  
+  NVIC_InitStruct.NVIC_IRQChannel = TIM3_IRQn;  
   NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0; 
   NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1; 
   NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;  
@@ -144,7 +152,7 @@ void Timer4_Initialization(void)
   /* -- Timer Configuration --------------------------------------------------- */
   TIM_DeInit(TIM4);
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStruct;
-  TIM_TimeBaseStruct.TIM_Period = 5000 - 1 ;  //250ms  --> 4Hz
+  TIM_TimeBaseStruct.TIM_Period = 2500 - 1 ;  //250ms  --> 4Hz
   TIM_TimeBaseStruct.TIM_Prescaler = 9 - 1; // Prescaled by 1800 -> = 0.1M(10us)
   TIM_TimeBaseStruct.TIM_ClockDivision = TIM_CKD_DIV1; // Div by one -> 90 MHz (Now RCC_DCKCFGR_TIMPRE is configured to divide clock by two)
   TIM_TimeBaseStruct.TIM_CounterMode = TIM_CounterMode_Down;
@@ -154,13 +162,13 @@ void Timer4_Initialization(void)
   TIM_Cmd(TIM4, ENABLE);
 }
 
-void Timer2_Initialization(void)
+void Timer3_Initialization(void)
 {
 
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
   /* -- Timer Configuration --------------------------------------------------- */
-  TIM_DeInit(TIM2);
+  TIM_DeInit(TIM3);
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStruct;
   TIM_TimeBaseStruct.TIM_Period = 0xFFFF ;  //250ms  --> 4Hz
   TIM_TimeBaseStruct.TIM_Prescaler = 900 - 1; // Prescaled by 1800 -> = 0.1M(10us)
@@ -168,50 +176,50 @@ void Timer2_Initialization(void)
   TIM_TimeBaseStruct.TIM_CounterMode = TIM_CounterMode_Up;
   //TIM_TimeBaseStruct.TIM_RepetitionCounter = 0;
   
-  TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
-  TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStruct);
+  TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
+  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStruct);
 }
 
-void Timer2_Channel_init(void)
+void Timer3_Channel_init(void)
 {
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
   GPIO_InitTypeDef GPIO_InitStructure; 
   /* TIM2 chennel1 configuration : PA.00 */  
-  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_0;  
+  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6;  
   GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;  
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;  
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;  
   GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP ;  
-  GPIO_Init(GPIOA, &GPIO_InitStructure);  
+  GPIO_Init(GPIOC, &GPIO_InitStructure);  
     
   /* Connect TIM pin to AF1 */  
-  GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_TIM2);
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_TIM3);
 
 
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
   /*TIM input capture structure*/
   TIM_ICInitTypeDef TIM_ICInitStructure;
 
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;  
-  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;  
+  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;  
   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;  
   TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;  
   TIM_ICInitStructure.TIM_ICFilter = 0x0;  
   
-  TIM_PWMIConfig(TIM2, &TIM_ICInitStructure);  
+  TIM_PWMIConfig(TIM3, &TIM_ICInitStructure);  
   
   /* Select the TIM2 Input Trigger: TI2FP2 */  
-  TIM_SelectInputTrigger(TIM2, TIM_TS_ETRF);  
+  TIM_SelectInputTrigger(TIM3, TIM_TS_ETRF);  
   
   /* Select the slave Mode: Reset Mode */  
-  TIM_SelectSlaveMode(TIM2, TIM_SlaveMode_Reset);  
-  TIM_SelectMasterSlaveMode(TIM2,TIM_MasterSlaveMode_Enable);  
+  TIM_SelectSlaveMode(TIM3, TIM_SlaveMode_Reset);  
+  TIM_SelectMasterSlaveMode(TIM3,TIM_MasterSlaveMode_Enable);  
   
   /* TIM enable counter */  
-  TIM_Cmd(TIM2, ENABLE);  
+  TIM_Cmd(TIM3, ENABLE);  
   
   /* Enable the CC2 Interrupt Request */  
-  TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);  
+  TIM_ITConfig(TIM3, TIM_IT_CC1, ENABLE);  
 
 }
 

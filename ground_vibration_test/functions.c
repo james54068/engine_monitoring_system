@@ -44,8 +44,8 @@ void mpu6500_int(void)
 {
 	MPU9250_Config(SPI1);
   	MPU9250_Init(SPI1);
-  	MPU9250_Config(SPI4);
-  	MPU9250_Init(SPI4);
+  	// MPU9250_Config(SPI4);
+  	// MPU9250_Init(SPI4);
   	// initial_AccGyro(1);
   	// Delay_us(5000000);
   	// initial_AccGyro(2);

@@ -192,38 +192,96 @@ void TIM4_IRQHandler()
 {
   if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET){
 
-      GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
-      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 6);
-      MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, mpu6500B_buf, 8);
+      GPIO_ToggleBits(GPIOC,GPIO_Pin_9);
+      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 14);
+      // MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, mpu6500B_buf, 8);
 
       int i=0; 
-      for(i=0; i<3; i++) 
-      AccelGyroA[i]=((s16)((u16)mpu6500A_buf[2*i] << 8) + mpu6500A_buf[2*i+1]);
-      for(i=0; i<4; i++) 
-      AccelGyroB[i]=((s16)((u16)mpu6500B_buf[2*i] << 8) + mpu6500B_buf[2*i+1]);
-      temperature = (AccelGyroB[3]-21)/333 + 21;
+      // for(i=0; i<3; i++) 
+      // AccelGyroA[i]=((s16)((u16)mpu6500A_buf[2*i] << 8) + mpu6500A_buf[2*i+1]);
+      // for(i=0; i<4; i++) 
+      // AccelGyroB[i]=((s16)((u16)mpu6500B_buf[2*i] << 8) + mpu6500B_buf[2*i+1]);
+      // temperature = (AccelGyroB[3]-21)/333 + 21;
       
-      AccelGyroA[0] -= acc1_offset[0];
-      AccelGyroA[1] -= acc1_offset[1];
-      AccelGyroA[2] += acc1_offset[2];
-      AccelGyroB[0] -= acc2_offset[0];
-      AccelGyroB[1] -= acc2_offset[1];
-      AccelGyroB[2] += acc2_offset[2];
+      // AccelGyroA[0] -= acc1_offset[0];
+      // AccelGyroA[1] -= acc1_offset[1];
+      // AccelGyroA[2] += acc1_offset[2];
+      // AccelGyroB[0] -= acc2_offset[0];
+      // AccelGyroB[1] -= acc2_offset[1];
+      // AccelGyroB[2] += acc2_offset[2];
 
-      AccelGyroA[0] = - AccelGyroA[0];
-      AccelGyroA[1] = - AccelGyroA[1];
-      AccelGyroA[2] = - AccelGyroA[2];
-      AccelGyroB[0] = - AccelGyroB[0];
-      AccelGyroB[1] = - AccelGyroB[1];
-      AccelGyroB[2] = - AccelGyroB[2];
+      // AccelGyroA[0] = - AccelGyroA[0];
+      // AccelGyroA[1] = - AccelGyroA[1];
+      // AccelGyroA[2] = - AccelGyroA[2];
+      // AccelGyroB[0] = - AccelGyroB[0];
+      // AccelGyroB[1] = - AccelGyroB[1];
+      // AccelGyroB[2] = - AccelGyroB[2];
     
-      if(timestamp++==10) timestamp=0;
+      // if(timestamp++==10) timestamp=0;
       //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
-      sprintf(buff,"%d,%d,%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature,rpm,timestamp);
-      DMA2_Stream7->NDTR=strlen(buff);
-      DMA_Cmd(DMA2_Stream7,ENABLE);
-      // DMA2_stream7_channel4_init();
+
+      // for(i=0;i<6;i++) {
+      //   buff[i]=mpu6500A_buf[i];
+      // }
+      // buff[6]='A';
+      // buff[7]='B';
+      // buff[8]='C';
+      // buff[9]='D';
+
+      // sprintf(buff,"%d\r\n",rpm);
+      // // DMA2_Stream7->NDTR=strlen(buff);
+      // // DMA_Cmd(DMA2_Stream7,ENABLE);
+      // // DMA2_stream7_channel4_init();
       // USART1_puts(buff);
+     //  timestamp++;
+     // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+     //    USART_SendData(USART1, timestamp);
+
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, 'A');
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, 'B');
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, 'C');
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, 'D');
+    
+    
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[0]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[1]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[2]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[3]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[4]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[5]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[6]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[7]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[8]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[9]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[10]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[11]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[12]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[13]);
+
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1,(u8)(rpm>>8));
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1,(u8)(rpm));
+     
+      // USART1_puts(0x33);
      
 
 
@@ -243,28 +301,34 @@ void TIM4_IRQHandler()
 }
 
 
-void TIM2_IRQHandler(void)  
+void TIM3_IRQHandler(void)  
 {
-  if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+  if (TIM_GetITStatus(TIM3, TIM_IT_Update) == SET)
   {
-     TIM_ClearITPendingBit(TIM2, TIM_IT_Update); 
+     TIM_ClearITPendingBit(TIM3, TIM_IT_Update); 
      rpm = 0;
+   
   }
-  else if (TIM_GetITStatus(TIM2, TIM_IT_CC1) != RESET)
+  else if (TIM_GetITStatus(TIM3, TIM_IT_CC1) == SET)
   {
   uint32_t IC2Value;
-
+  GPIO_ToggleBits(GPIOC,GPIO_Pin_8); 
   //RCC_GetClocksFreq(&RCC_Clocks);  
   
   /* Clear TIM2 Capture compare interrupt pending bit */  
-  TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);  
+  TIM_ClearITPendingBit(TIM3, TIM_IT_CC1); 
 
   /* Get the Input Capture value */  
-  IC2Value = TIM_GetCapture1(TIM2);
+  IC2Value = TIM_GetCapture1(TIM3);
+
+  // sprintf(buff,"%d\r\n",IC2Value);
+  // USART1_puts(buff);
 
   rpm = (100000/IC2Value)*60;
+  TIM_SetCounter(TIM3,0);
+  // IC2Value = 0;
 
-  //TIM_SetAutoreload(TIM2,0);
+  // TIM_SetAutoreload(TIM3,0);
   //sprintf(rpm_buff,"%d",rpm);
   // USART1_puts(rpm_buff);
   }
