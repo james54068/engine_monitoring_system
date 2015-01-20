@@ -29,11 +29,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
+#include "stm32f4xx.h"
 #include "main.h"
 #include "mpu6500.h"
 #include "mcu_setting.h"
 #include "functions.h"
 #include <string.h> 
+
+uint8_t buff_len = 0;
     
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{
@@ -177,16 +180,17 @@ void DMA2_Stream7_IRQHandler(void)
 {
   if(DMA_GetFlagStatus(DMA2_Stream7,DMA_IT_TCIF7)==SET)
   {
-    //GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
-    DMA_Cmd(DMA2_Stream7,DISABLE);
-    //DMA_ClearFlag(DMA2_Stream7,DMA_IT_TCIF7);
+    GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
+    // DMA_Cmd(DMA2_Stream7,DISABLE);
+    // DMA_ClearFlag(DMA2_Stream7,DMA_IT_TCIF7);
     DMA_ClearITPendingBit(DMA2_Stream7,DMA_IT_TCIF7); 
   }  
 }
-
+int timestamp=0;
 void TIM4_IRQHandler()
 {
   if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET){
+
       GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
       MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 6);
       MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, mpu6500B_buf, 8);
@@ -212,10 +216,12 @@ void TIM4_IRQHandler()
       AccelGyroB[1] = - AccelGyroB[1];
       AccelGyroB[2] = - AccelGyroB[2];
     
-    
+      if(timestamp++==10) timestamp=0;
       //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
-      sprintf(buff,"%d,%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature,rpm);
-      USART1_puts(buff);
+      sprintf(buff,"%d,%d,%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature,rpm,timestamp);
+      buff_len = strlen(buff);
+      DMA2_stream7_channel4_init();
+      // USART1_puts(buff);
      
 
 

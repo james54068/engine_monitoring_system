@@ -193,7 +193,6 @@ void MPU9250_Init(SPI_TypeDef* SPIx);
 u8 MPU9250_Check(SPI_TypeDef* SPIx);
 void MPU9250_Read(SPI_TypeDef* SPIx, u8 *ReadBuf);
 u8 SPIx_ReadWriteByte(SPI_TypeDef* SPIx, u8 TxData);
-u8 SPIx_WriteByte(SPI_TypeDef* SPIx, u8 TxData);
 /*====================================================================================================*/
 /*====================================================================================================*/
 #endif

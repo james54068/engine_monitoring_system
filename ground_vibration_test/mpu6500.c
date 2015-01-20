@@ -293,16 +293,3 @@ u8 SPIx_ReadWriteByte(SPI_TypeDef* SPIx, u8 TxData)
 }
 
 
-u8 SPIx_WriteByte(SPI_TypeDef* SPIx, u8 TxData)
-{		
-	u8 retry=0;				 
-	while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_TXE) == RESET) 
-		{
-			retry++;
-			if(retry>200)return 0;
-		}			  
-
-	SPI_I2S_SendData(SPIx, TxData);	
-	return 0;
-	
-}

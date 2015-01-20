@@ -243,3 +243,17 @@ void Semi_Circle_Meter(uint16_t x,uint16_t y,uint16_t radius,float max,float min
     DrawThickSemiCircle(x,y,radius-15,5);   
 
 }
+
+void XY_axis(uint16_t x,uint16_t y,float x_max,float x_min,float y_max,float y_min)
+{
+  uint8_t num[100]="0";
+  LCD_DrawLine(x,y-100,100,LCD_DIR_VERTICAL);
+  LCD_DrawLine(x,y,200,LCD_DIR_HORIZONTAL);
+  LCD_DisplayChar(y+5,x-10,num[0]);
+
+
+
+
+
+
+}

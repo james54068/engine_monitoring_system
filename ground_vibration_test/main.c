@@ -47,8 +47,7 @@ int main(void)
   MCU_initialization();
   mpu6500_int();
   NVIC_configuration();
-  //USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
-
+  
   LCD_SetLayer(LCD_FOREGROUND_LAYER);
   LCD_SetFont(&Font8x12);
   LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
@@ -56,12 +55,13 @@ int main(void)
   LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE); 
   //Circle_Meter(120,160,100,100,-100);
   Semi_Circle_Meter(120,80,70,100,0);
-  Semi_Circle_Meter(120,200,70,10000,0);
+  Semi_Circle_Meter(120,170,70,10000,0);
+  XY_axis(20,300,100,0,100,0);
 
   while (1)
   {
       float T,R = 0;
-      GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
+      // GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
       sprintf(IMU2," %d ",temperature);
       LCD_SetLayer(LCD_FOREGROUND_LAYER);
       LCD_SetFont(&Font8x8);
@@ -79,12 +79,12 @@ int main(void)
 
 
       sprintf(rpm_buff," %d ",rpm); 
-      LCD_DisplayStringLine(LINE(15), (uint8_t*)rpm_buff);
+      LCD_DisplayStringLine(LINE(13), (uint8_t*)rpm_buff);
       memset(rpm_buff,0x00,10);    
       R = (float)rpm;
-      Draw_SemiCircleNeedle(120,200,45,10000,0,R);
+      Draw_SemiCircleNeedle(120,170,45,10000,0,R);
       LCD_SetColors(LCD_COLOR_WHITE,LCD_COLOR_WHITE);
-      Draw_SemiCircleNeedle(120,200,45,10000,0,R);
+      Draw_SemiCircleNeedle(120,170,45,10000,0,R);
       LCD_SetColors(LCD_COLOR_BLACK,LCD_COLOR_WHITE);
 
 /*      uint16_t rpm=8000;
