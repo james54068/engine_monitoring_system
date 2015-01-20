@@ -2,6 +2,8 @@
 #include "stm32f429i_discovery.h"
 #include "stm32f429i_discovery_lcd.h"
 #include <math.h>
+#include <string.h>
+#include <stdio.h>
 
 void DrawThickCircle(uint32_t x,uint32_t y,uint32_t radius, uint32_t thickness){
 
@@ -32,9 +34,9 @@ void Draw_CircleNeedle(uint16_t x,uint16_t y,uint16_t radius,float max,float min
 {
   float midpoint;
   float range;
-  float angle;
-  int16_t point2x;
-  int16_t point2y;
+  double angle;
+  int32_t point2x;
+  int32_t point2y;
   midpoint = (max + min)/2;
   range    = max - min;
 
@@ -70,9 +72,9 @@ void Draw_SemiCircleNeedle(uint16_t x,uint16_t y,uint16_t radius,float max,float
 {
   float midpoint;
   float range;
-  float angle;
-  int16_t point2x;
-  int16_t point2y;
+  double angle;
+  int32_t point2x;
+  int32_t point2y;
   midpoint = (max + min)/2;
   range    = max - min;
 
@@ -111,30 +113,17 @@ void Draw_SemiCircleNeedle(uint16_t x,uint16_t y,uint16_t radius,float max,float
 
 void Circle_Meter(uint16_t x,uint16_t y,uint16_t radius,float max,float min)
 {
-	char num[100] ;//= "123456789";
-	float midpoint = (max + min)/2;
+	char num[100] ;
+	// float midpoint = (max + min)/2;
   	float range = max - min;
-  	float angle = 0;
-  	int16_t point2x;
-  	int16_t point2y;
+  	double angle = 0;
+  	int32_t point2x;
+  	int32_t point2y;
   	uint8_t buff_len;
- 
-  	// LCD_DisplayChar(30 ,40 ,0x55);
-  	// sprintf(num,"%f",-3.33333);
-  	// buff_len = strlen(num);
-  	// sprintf(num,"%d",buff_len);
-  	// LCD_DisplayChar(50 ,115 ,num[0]);
-  	// LCD_DisplayChar(50 ,125 ,num[1]);
-
-  	/*Line = x : Column = y*/
-  	// LCD_DisplayChar(50 ,50 ,num[0]);
-  	
 
   	float i;
-  	uint8_t k = 0;
+  	// uint8_t k = 0;
   	uint8_t j = 0;
-  	static uint8_t interval = 5;
-  	uint8_t odd = 5;
 
   	for (i = min + range/10 ; i < max ; i += range/10)
   	{
@@ -145,7 +134,7 @@ void Circle_Meter(uint16_t x,uint16_t y,uint16_t radius,float max,float min)
   		// LCD_DisplayChar(point2y,point2x,num[j]);
   		// j++;
 
-  		sprintf(num,"%f",i);
+  		sprintf(num,"%f",(double)i);
   		buff_len = strlen(num);
 
   		for(j = 0;j < buff_len; j++)
@@ -177,37 +166,24 @@ void Circle_Meter(uint16_t x,uint16_t y,uint16_t radius,float max,float min)
 
 void Semi_Circle_Meter(uint16_t x,uint16_t y,uint16_t radius,float max,float min)
 {
-  char num[100] ;//= "123456789";
+  char num[100] ;
   float midpoint = (max + min)/2;
     float range = max - min;
-    float angle = 0;
-    int16_t point2x;
-    int16_t point2y;
+    double angle = 0;
+    int32_t point2x;
+    int32_t point2y;
     uint8_t buff_len;
- 
-    // LCD_DisplayChar(30 ,40 ,0x55);
-    // sprintf(num,"%f",-3.33333);
-    // buff_len = strlen(num);
-    // sprintf(num,"%d",buff_len);
-    // LCD_DisplayChar(50 ,115 ,num[0]);
-    // LCD_DisplayChar(50 ,125 ,num[1]);
-
-    /*Line = x : Column = y*/
-    // LCD_DisplayChar(50 ,50 ,num[0]);
-    
 
     float i;
-    uint8_t k = 0;
     uint8_t j = 0;
-    static uint8_t interval = 5;
-    uint8_t odd = 5;
+
 
     for (i = min ; i <= max ; i += range/10)
     {
       
       
-      point2x = x - radius*cos(-(angle)*3.14/180);
-      point2y = y + radius*sin(-(angle)*3.14/180);
+      point2x = x - (float)(radius*cos((-(angle)*3.14/180)));
+      point2y = y + (float)(radius*sin((-(angle)*3.14/180)));
       if(i == midpoint)
         point2y -= 10;
  
@@ -215,7 +191,7 @@ void Semi_Circle_Meter(uint16_t x,uint16_t y,uint16_t radius,float max,float min
       // j++;
       angle += 180/10;
 
-      sprintf(num,"%f",i);
+      sprintf(num,"%f",(double)i);
       buff_len = strlen(num);
 
       for(j = 0;j < buff_len; j++)
@@ -246,6 +222,8 @@ void Semi_Circle_Meter(uint16_t x,uint16_t y,uint16_t radius,float max,float min
 
 void XY_axis(uint16_t x,uint16_t y,float x_max,float x_min,float y_max,float y_min)
 {
+  float x_range = x_max - x_min;
+  float y_range = y_max - y_min;
   uint8_t num[100]="0";
   LCD_DrawLine(x,y-100,100,LCD_DIR_VERTICAL);
   LCD_DrawLine(x,y,200,LCD_DIR_HORIZONTAL);

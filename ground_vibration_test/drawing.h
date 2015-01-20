@@ -3,6 +3,7 @@
 
 #include "stm32f429i_discovery.h"
 #include "stm32f429i_discovery_lcd.h"
+#include <string.h>
 
 void DrawThickCircle(uint32_t x,uint32_t y,uint32_t radius, uint32_t thickness);
 void DrawThickSemiCircle(uint32_t x,uint32_t y,uint32_t radius, uint32_t thickness);

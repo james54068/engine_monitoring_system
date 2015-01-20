@@ -13,8 +13,8 @@ __IO  int16_t   AccelGyroB[7];
 __IO  int8_t    temperature;
 __IO  uint16_t  rpm = 0;
 
-__IO  char      IMU2[10];
-__IO  char      rpm_buff[10];
+char      IMU2[10];
+char      rpm_buff[10];
 
 void MCU_initialization(void)
 {
@@ -294,20 +294,20 @@ void send_byte(uint8_t b)
   while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
 }
 
-int _write (int fd, char *ptr, int len)
-{
-   // Write "len" of char from "ptr" to file id "fd"
-   // * Return number of char written.
-   // * Need implementing with UART here. 
-  //fd = 1;
-  int i = 0;
-  for ( i = 0; i<len ;i++)
-  {
-    send_byte(*ptr);
-    ptr++;
-  }
-  return len;
-}
+// int _write (int fd, char *ptr, int len)
+// {
+//    // Write "len" of char from "ptr" to file id "fd"
+//    // * Return number of char written.
+//    // * Need implementing with UART here. 
+//   //fd = 1;
+//   int i = 0;
+//   for ( i = 0; i<len ;i++)
+//   {
+//     send_byte(*ptr);
+//     ptr++;
+//   }
+//   return len;
+// }
 
 
 
