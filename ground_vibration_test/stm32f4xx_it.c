@@ -30,6 +30,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
 #include "stm32f4xx.h"
+#include "stm32f4xx_dma.h"
 #include "main.h"
 #include "mpu6500.h"
 #include "mcu_setting.h"
@@ -181,7 +182,7 @@ void DMA2_Stream7_IRQHandler(void)
   if(DMA_GetFlagStatus(DMA2_Stream7,DMA_IT_TCIF7)==SET)
   {
     GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
-    // DMA_Cmd(DMA2_Stream7,DISABLE);
+    DMA_Cmd(DMA2_Stream7,DISABLE);
     // DMA_ClearFlag(DMA2_Stream7,DMA_IT_TCIF7);
     DMA_ClearITPendingBit(DMA2_Stream7,DMA_IT_TCIF7); 
   }  
@@ -219,8 +220,9 @@ void TIM4_IRQHandler()
       if(timestamp++==10) timestamp=0;
       //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
       sprintf(buff,"%d,%d,%d,%d,%d,%d,%d,%d,%d \r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroB[0],AccelGyroB[1],AccelGyroB[2],temperature,rpm,timestamp);
-      buff_len = strlen(buff);
-      DMA2_stream7_channel4_init();
+      DMA2_Stream7->NDTR=strlen(buff);
+      DMA_Cmd(DMA2_Stream7,ENABLE);
+      // DMA2_stream7_channel4_init();
       // USART1_puts(buff);
      
 

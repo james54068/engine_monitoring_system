@@ -1,11 +1,11 @@
 #include <string.h>
 #include "mcu_setting.h"
 #include "stm32f4xx.h"
+#include "stm32f4xx_it.h"
 
 u8        mpu6500A_buf[16];
 u8        mpu6500B_buf[16];
 char      buff[50];
-uint8_t   hh[100]="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa12345\r\n";
 
 int8_t    buff_size;
 __IO  int16_t   AccelGyroA[7];
@@ -24,7 +24,7 @@ void MCU_initialization(void)
     Timer4_Initialization();
     Timer2_Initialization();
     Timer2_Channel_init();
-    //DMA2_stream7_channel4_init();
+    DMA2_stream7_channel4_init();
   
 }
 
@@ -114,6 +114,7 @@ void USART1_Configuration(void)
 {
     /* USART1 clock enable */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
     USART_InitTypeDef USART_InitStructure;
 
     /* USARTx configuration ------------------------------------------------------*/
@@ -125,7 +126,7 @@ void USART1_Configuration(void)
      *  - Hardware flow control disabled (RTS and CTS signals)
      *  - Receive and transmit enabled
      */
-    USART_InitStructure.USART_BaudRate = 921600;
+    USART_InitStructure.USART_BaudRate = 921600;//921600
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -246,7 +247,6 @@ void DMA2_stream0_channel3_init(void)
 
 void DMA2_stream7_channel4_init(void)
 {
-   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
   /* GPIOA clock enable */
 
   DMA_DeInit(DMA2_Stream7);
@@ -255,14 +255,14 @@ void DMA2_stream7_channel4_init(void)
 
   DMA_InitStruct.DMA_Channel = DMA_Channel_4;
   DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t)&USART1->DR;
-  DMA_InitStruct.DMA_Memory0BaseAddr = (uint32_t)buff;
+  DMA_InitStruct.DMA_Memory0BaseAddr = (uint32_t)&buff;
   DMA_InitStruct.DMA_DIR = DMA_DIR_MemoryToPeripheral;
   DMA_InitStruct.DMA_BufferSize = 50;
   DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
   DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-  DMA_InitStruct.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;
   DMA_InitStruct.DMA_Priority = DMA_Priority_High;
   DMA_InitStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
   DMA_InitStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
@@ -272,7 +272,7 @@ void DMA2_stream7_channel4_init(void)
   DMA_Init(DMA2_Stream7,&DMA_InitStruct);
   DMA_Cmd(DMA2_Stream7,ENABLE);
   DMA_ITConfig(DMA2_Stream7,DMA_IT_TC,ENABLE);
-   
+  USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
 }
 
 
