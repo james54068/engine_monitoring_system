@@ -248,38 +248,38 @@ void TIM4_IRQHandler()
     
     
       while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[0]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[1]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[2]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[3]);
+        USART_SendData(USART1, mpu6500A_buf[5]);
       while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
         USART_SendData(USART1, mpu6500A_buf[4]);
       while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[5]);
+        USART_SendData(USART1, mpu6500A_buf[3]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[2]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[1]);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART1, mpu6500A_buf[0]);
       // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
       //   USART_SendData(USART1, mpu6500A_buf[6]);
       // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
       //   USART_SendData(USART1, mpu6500A_buf[7]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[8]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[9]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[10]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[11]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[12]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[13]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[8]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[9]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[10]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[11]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[12]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[13]);
 
       while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1,(u8)(rpm>>8));
+        USART_SendData(USART1,(u8)rpm);
       while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1,(u8)(rpm));
+        USART_SendData(USART1,(u8)(rpm>>8));
      
       // USART1_puts(0x33);
      
