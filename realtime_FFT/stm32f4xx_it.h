@@ -1,9 +1,9 @@
 /**
   ******************************************************************************
-  * @file    Project/STM32F4xx_StdPeriph_Templates/stm32f4xx_it.h 
+  * @file    Touch_Panel/stm32f4xx_it.h 
   * @author  MCD Application Team
-  * @version V1.3.0
-  * @date    13-November-2013
+  * @version V1.0.1
+  * @date    11-November-2013
   * @brief   This file contains the headers of the interrupt handlers.
   ******************************************************************************
   * @attention
@@ -35,9 +35,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
-
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+extern uint8_t buff_len;
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
@@ -50,7 +50,12 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-void TimingDelay_Decrement(void);
+
+/*STM32F4xx Peripherals Interrupt Handlers*/
+void DMA2_Stream0_IRQHandler(void);
+void DMA2_Stream7_IRQHandler(void);
+void TIM4_IRQHandler(void);
+void TIM2_IRQHandler(void) ;
 
 #ifdef __cplusplus
 }

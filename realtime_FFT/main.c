@@ -31,6 +31,8 @@
 /* Include arm_math.h mathematic functions */
 #include "arm_math.h"
 
+#include "mcu_setting.h"
+
 /* FFT settings */
 #define SAMPLES					8192			/* 256 real party and 256 imaginary parts */
 #define FFT_SIZE				SAMPLES / 2		/* FFT size is always the same size as we have samples, so 256 in our case */
@@ -64,47 +66,51 @@ int main(void) {
 	uint32_t avgmaxIndex;	
 	uint16_t i;
 	
-	/* Initialize system */
+	// /* Initialize system */
 	SystemInit();
 	
-	/* Delay init */
+	// /* Delay init */
 	TM_DELAY_Init();
 	
-	/* Initialize LED's on board */
+	// /* Initialize LED's on board */
 	TM_DISCO_LedInit();
 	
-	/* Initialize LCD */
+	// /* Initialize LCD */
 	TM_ILI9341_Init();
 	TM_ILI9341_Rotate(TM_ILI9341_Orientation_Landscape_1);
 	
 	/* Initialize DAC2, PA5 for fake sinus, use TIM4 to generate DMA */
-	TM_DAC_SIGNAL_Init(TM_DAC2, TIM4);
+	// TM_DAC_SIGNAL_Init(TM_DAC2, TIM4);
 	
 	/* Set sinus with 10kHz */
-	TM_DAC_SIGNAL_SetSignal(TM_DAC2, TM_DAC_SIGNAL_Signal_Sinus, 10000);
+	// TM_DAC_SIGNAL_SetSignal(TM_DAC2, TM_DAC_SIGNAL_Signal_Sinus, 10000);
 
 	/* Initialize ADC, PA0 is used */
-	TM_ADC_Init(ADC1, ADC_Channel_0);
+	// TM_ADC_Init(ADC1, ADC_Channel_0);
 	
 	/* Print on LCD */
 	TM_ILI9341_Puts(10, 10, "FFT graphic equlizer\nstm32f4-discovery.com", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN2);
 		
 	GPIO_Configuration();
+	USART1_Configuration(); 
+	
+	
 	while (1) {
+		USART1_puts("123\r\n");
 		/* This part should be done with DMA and timer for ADC treshold */
 		/* Actually, best solution is double buffered DMA with timer for ADC treshold */
 		/* But this is only for show principle on how FFT works */
-		for (i = 0; i < SAMPLES; i += 2) {
-			/* Each 22us ~ 45kHz sample rate */
-			while (TM_DELAY_Time() < 22);
-			TM_DELAY_SetTime(0);
-			GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
-			/* Real part, must be between -1 and 1 */
-			Input[(uint16_t)i] = (float32_t)((float32_t)TM_ADC_Read(ADC1, ADC_Channel_0) - (float32_t)2048.0) / (float32_t)2048.0;
-			/* Imaginary part */
-			Input[(uint16_t)(i + 1)] = 0;
-		}
-		
+		// for (i = 0; i < SAMPLES; i += 2) {
+		// 	/* Each 22us ~ 45kHz sample rate */
+		// 	while (TM_DELAY_Time() < 22);
+		// 	TM_DELAY_SetTime(0);
+		// 	GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
+		// 	 Real part, must be between -1 and 1 
+		// 	Input[(uint16_t)i] = (float32_t)((float32_t)TM_ADC_Read(ADC1, ADC_Channel_0) - (float32_t)2048.0) / (float32_t)2048.0;
+		// 	/* Imaginary part */
+		// 	Input[(uint16_t)(i + 1)] = 0;
+		// }
+	
 		/* Initialize the CFFT/CIFFT module, intFlag = 0, doBitReverse = 1 */
 		arm_cfft_radix4_init_f32(&S, FFT_SIZE, 0, 1);
 		

@@ -31,7 +31,7 @@ void DMA2_stream0_channel3_init(void);
 void DMA2_stream7_channel4_init(void);
 void USART1_puts(char* s);
 void send_byte(uint8_t b);
-// int _write (int fd, char *ptr, int len);
+int _write (int fd, char *ptr, int len);
 
 
 #endif

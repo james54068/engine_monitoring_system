@@ -25,20 +25,20 @@ void Delay_us(int nTime)
     while(TimingDelay != 0);
 }
 
-void lcd_int(void)
-{
-	  /* LCD initialization */
-  LCD_Init(); 
-  /* LCD Layer initialization */
-  LCD_LayerInit();    
-  /* Enable the LTDC */
-  LTDC_Cmd(ENABLE);
-  /* Set LCD foreground layer */
-  LCD_SetLayer(LCD_FOREGROUND_LAYER);  
-  /* Clear the LCD */
-  LCD_Clear(LCD_COLOR_WHITE); 
+// void lcd_int(void)
+// {
+// 	  /* LCD initialization */
+//   LCD_Init(); 
+//   /* LCD Layer initialization */
+//   LCD_LayerInit();    
+//   /* Enable the LTDC */
+//   LTDC_Cmd(ENABLE);
+//   /* Set LCD foreground layer */
+//   LCD_SetLayer(LCD_FOREGROUND_LAYER);  
+//   /* Clear the LCD */
+//   LCD_Clear(LCD_COLOR_WHITE); 
 
-}
+// }
 
 void mpu6500_int(void)
 {

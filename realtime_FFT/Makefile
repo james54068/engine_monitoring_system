@@ -106,13 +106,14 @@ OBJS=	./system_stm32f4xx.o \
         $(FFT)/TM/tm_stm32f4_adc.o \
         $(FFT)/TM/tm_stm32f4_disco.o \
         $(FFT)/TM/tm_stm32f4_spi.o \
+        $(MPU6500)/mpu6500.o \
+        ./mcu_setting.o \
+        ./stm32f4xx_it.o \
+        ./functions.o \
         ./main.o \
         $(STARTUP)
-        # $(MPU6500)/mpu6500.o \
         # $(LCD)/drawing.o \
-        # ./mcu_setting.o \
-        # ./stm32f4xx_it.o \
-        # ./functions.o \
+       
        
         
 #Make all
