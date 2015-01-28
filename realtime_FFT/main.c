@@ -32,7 +32,7 @@
 #include "arm_math.h"
 
 /* FFT settings */
-#define SAMPLES					512 			/* 256 real party and 256 imaginary parts */
+#define SAMPLES					8192			/* 256 real party and 256 imaginary parts */
 #define FFT_SIZE				SAMPLES / 2		/* FFT size is always the same size as we have samples, so 256 in our case */
 
 #define FFT_BAR_MAX_HEIGHT		120 			/* 120 px on the LCD */
@@ -40,6 +40,7 @@
 /* Global variables */
 float32_t Input[SAMPLES];
 float32_t Output[FFT_SIZE];
+float32_t Output_average[256];
 
 /* Draw bar for LCD */
 /* Simple library to draw bars */
@@ -58,6 +59,9 @@ int main(void) {
 	arm_cfft_radix4_instance_f32 S;	/* ARM CFFT module */
 	float32_t maxValue;				/* Max FFT value is stored here */
 	uint32_t maxIndex;				/* Index in Output array where max value is */
+	/*FOR AVERAGE DATA*/
+	float32_t avgmaxValue;				
+	uint32_t avgmaxIndex;	
 	uint16_t i;
 	
 	/* Initialize system */
@@ -85,6 +89,7 @@ int main(void) {
 	/* Print on LCD */
 	TM_ILI9341_Puts(10, 10, "FFT graphic equlizer\nstm32f4-discovery.com", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN2);
 		
+	GPIO_Configuration();
 	while (1) {
 		/* This part should be done with DMA and timer for ADC treshold */
 		/* Actually, best solution is double buffered DMA with timer for ADC treshold */
@@ -93,7 +98,7 @@ int main(void) {
 			/* Each 22us ~ 45kHz sample rate */
 			while (TM_DELAY_Time() < 22);
 			TM_DELAY_SetTime(0);
-			
+			GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
 			/* Real part, must be between -1 and 1 */
 			Input[(uint16_t)i] = (float32_t)((float32_t)TM_ADC_Read(ADC1, ADC_Channel_0) - (float32_t)2048.0) / (float32_t)2048.0;
 			/* Imaginary part */
@@ -112,18 +117,23 @@ int main(void) {
 		/* Calculates maxValue and returns corresponding value */
 		arm_max_f32(Output, FFT_SIZE, &maxValue, &maxIndex);
 
+		/*Get average data of sample rate at 4096/2 -> 256 to display on LCD*/
+		for (i = 0; i < 256; i++) Output_average[i]=(Output[8*i]+Output[8*i+1]+Output[8*i+2]+Output[8*i+3]+Output[8*i+4]+Output[8*i+5]+Output[8*i+6]+Output[8*i+7])/8.0;
+		arm_max_f32(Output_average, 256, &avgmaxValue, &avgmaxIndex);
 		/* Display data on LCD */
-		for (i = 0; i < FFT_SIZE / 2; i++) {
+		for (i = 0; i < 256; i++) {
 			/* Draw FFT results */
-			DrawBar(30 + 2 * i,
+			DrawBar(30 + i,
 					220,
 					FFT_BAR_MAX_HEIGHT,
-					(uint16_t)maxValue,
-					(float32_t)Output[(uint16_t)i],
+					(uint16_t)avgmaxValue,
+					(float32_t)Output_average[(uint16_t)i],
 					0x1234,
 					0xFFFF
 			);
 		}
+
+
 
 		/* We want to turn led ON only when low frequencies are active */
 		/* Output[0] = Signals DC value */
