@@ -112,11 +112,11 @@ void NVIC_configuration(void)
   /*preemption:2 sub:8*/
 
   /*DMA2 Stream7 Interrupt */
-  // NVIC_InitStruct.NVIC_IRQChannel = DMA2_Stream7_IRQn;
-  // NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0; 
-  // NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
-  // NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-  // NVIC_Init(&NVIC_InitStruct);
+  NVIC_InitStruct.NVIC_IRQChannel = DMA2_Stream7_IRQn;
+  NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0; 
+  NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStruct);
 
   /*TIM4 global Interrupt */
   NVIC_InitStruct.NVIC_IRQChannel =  TIM4_IRQn ;
@@ -281,7 +281,7 @@ void DMA2_stream7_channel4_init(void)
   DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t)&USART1->DR;
   DMA_InitStruct.DMA_Memory0BaseAddr = (uint32_t)&buff;
   DMA_InitStruct.DMA_DIR = DMA_DIR_MemoryToPeripheral;
-  DMA_InitStruct.DMA_BufferSize = 50;
+  DMA_InitStruct.DMA_BufferSize = 10;
   DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;

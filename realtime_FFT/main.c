@@ -95,7 +95,8 @@ int main(void) {
 	TM_ILI9341_Puts(10, 210, "Z", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);	
 	GPIO_Configuration();
 	LED_Initialization();
-	USART1_Configuration(); 
+	USART1_Configuration();
+	DMA2_stream7_channel4_init(); 
 	Timer4_Initialization();
 	NVIC_configuration();
 	MPU9250_Config(SPI1);

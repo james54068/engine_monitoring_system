@@ -183,9 +183,7 @@ void DMA2_Stream7_IRQHandler(void)
 {
   if(DMA_GetFlagStatus(DMA2_Stream7,DMA_IT_TCIF7)==SET)
   {
-    GPIO_ToggleBits(GPIOA,GPIO_Pin_1);
     DMA_Cmd(DMA2_Stream7,DISABLE);
-    // DMA_ClearFlag(DMA2_Stream7,DMA_IT_TCIF7);
     DMA_ClearITPendingBit(DMA2_Stream7,DMA_IT_TCIF7); 
   }  
 }
@@ -220,8 +218,20 @@ void TIM4_IRQHandler()
         colection_flag = RESET;
         GPIO_ToggleBits(GPIOG,GPIO_Pin_13);
       } 
-      sprintf(buff,"%d,%d,%d,%d,%d,%d\r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroA[4],AccelGyroA[5],AccelGyroA[6]);
-      USART1_puts(buff);
+
+      buff[0]='A';
+      buff[1]='B';
+      buff[2]='C';
+      buff[3]='D';
+      buff[4]=mpu6500A_buf[5];
+      buff[5]=mpu6500A_buf[4];
+      buff[6]=mpu6500A_buf[3];
+      buff[7]=mpu6500A_buf[2];
+      buff[8]=mpu6500A_buf[1];
+      buff[9]=mpu6500A_buf[0];
+      DMA_Cmd(DMA2_Stream7,ENABLE);
+      // sprintf(buff,"%d,%d,%d,%d,%d,%d\r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroA[4],AccelGyroA[5],AccelGyroA[6]);
+      // USART1_puts(buff);
 
       // for(i=0;i<6;i++) {
       //   buff[i]=mpu6500A_buf[i];
@@ -262,32 +272,12 @@ void TIM4_IRQHandler()
       //   USART_SendData(USART1, mpu6500A_buf[1]);
       // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
       //   USART_SendData(USART1, mpu6500A_buf[0]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[6]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[7]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[8]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[9]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[10]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[11]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[12]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[13]);
-
+  
       // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
       //   USART_SendData(USART1,(u8)rpm);
       // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
       //   USART_SendData(USART1,(u8)(rpm>>8));
      
-      // USART1_puts(0x33);
-     
-
-
       // buff_size = strlen(buff);
       // DMA2_Stream7->NDTR = buff_size ;
       // USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
@@ -296,9 +286,6 @@ void TIM4_IRQHandler()
  
       // USART_DMACmd(USART1,USART_DMAReq_Tx,DISABLE);
     
-
-
-       //USART1_puts(buff);
     TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
   } 
 }
