@@ -37,8 +37,10 @@
 #include "functions.h"
 #include <string.h> 
 
+#include "tm_stm32f4_delay.h"
 uint8_t buff_len = 0;
-    
+FlagStatus colection_flag = SET;
+float collect_buff[8192]; 
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{
   */
@@ -188,37 +190,31 @@ void DMA2_Stream7_IRQHandler(void)
   }  
 }
 int timestamp=0;
+char words[20];
+int i,j=0; 
 void TIM4_IRQHandler()
 {
   if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET){
-
-      GPIO_ToggleBits(GPIOC,GPIO_Pin_9);
-      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 14);
-      // MPU9250_ReadRegs(SPI4,MPU6500_ACCEL_XOUT_H, mpu6500B_buf, 8);
-
-      int i=0; 
-      // for(i=0; i<3; i++) 
-      // AccelGyroA[i]=((s16)((u16)mpu6500A_buf[2*i] << 8) + mpu6500A_buf[2*i+1]);
-      // for(i=0; i<4; i++) 
-      // AccelGyroB[i]=((s16)((u16)mpu6500B_buf[2*i] << 8) + mpu6500B_buf[2*i+1]);
-      // temperature = (AccelGyroB[3]-21)/333 + 21;
       
-      // AccelGyroA[0] -= acc1_offset[0];
-      // AccelGyroA[1] -= acc1_offset[1];
-      // AccelGyroA[2] += acc1_offset[2];
-      // AccelGyroB[0] -= acc2_offset[0];
-      // AccelGyroB[1] -= acc2_offset[1];
-      // AccelGyroB[2] += acc2_offset[2];
+      // USART1_puts("123\r\n");
+      MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 14);
 
-      // AccelGyroA[0] = - AccelGyroA[0];
-      // AccelGyroA[1] = - AccelGyroA[1];
-      // AccelGyroA[2] = - AccelGyroA[2];
-      // AccelGyroB[0] = - AccelGyroB[0];
-      // AccelGyroB[1] = - AccelGyroB[1];
-      // AccelGyroB[2] = - AccelGyroB[2];
-    
-      // if(timestamp++==10) timestamp=0;
-      //printf("%d,%d,%d,\r\n",AccelGyro[0],AccelGyro[1],AccelGyro[2]);
+      GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
+      for(i=0; i<3; i++) 
+      AccelGyroA[i]=((s16)((u16)mpu6500A_buf[2*i] << 8) + mpu6500A_buf[2*i+1]);
+
+      if(colection_flag && j<8192){
+        if(j%2) collect_buff[j]=0.0;
+        else collect_buff[j] = AccelGyroA[0]/2048.0;
+        // sprintf(buff,"%f,%f\r\n",collect_buff[j],j);
+        // USART1_puts(buff);
+        j++;
+      }else{
+        j=0;
+        colection_flag = RESET;
+        GPIO_ToggleBits(GPIOG,GPIO_Pin_13);
+      } 
+      
 
       // for(i=0;i<6;i++) {
       //   buff[i]=mpu6500A_buf[i];
@@ -237,28 +233,28 @@ void TIM4_IRQHandler()
      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
      //    USART_SendData(USART1, timestamp);
 
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, 'A');
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, 'B');
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, 'C');
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, 'D');
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, 'A');
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, 'B');
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, 'C');
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, 'D');
     
     
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[5]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[4]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[3]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[2]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[1]);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1, mpu6500A_buf[0]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[5]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[4]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[3]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[2]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[1]);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1, mpu6500A_buf[0]);
       // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
       //   USART_SendData(USART1, mpu6500A_buf[6]);
       // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
@@ -276,10 +272,10 @@ void TIM4_IRQHandler()
       // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
       //   USART_SendData(USART1, mpu6500A_buf[13]);
 
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1,(u8)rpm);
-      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART1,(u8)(rpm>>8));
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1,(u8)rpm);
+      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      //   USART_SendData(USART1,(u8)(rpm>>8));
      
       // USART1_puts(0x33);
      

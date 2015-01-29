@@ -32,13 +32,13 @@
 #include "arm_math.h"
 
 #include "mcu_setting.h"
-
+#include "stm32f4xx_it.h"
 /* FFT settings */
 #define SAMPLES					8192			/* 256 real party and 256 imaginary parts */
 #define FFT_SIZE				SAMPLES / 2		/* FFT size is always the same size as we have samples, so 256 in our case */
 
-#define FFT_BAR_MAX_HEIGHT		120 			/* 120 px on the LCD */
-
+#define FFT_BAR_MAX_HEIGHT		100 			/* 120 px on the LCD */
+ 
 /* Global variables */
 float32_t Input[SAMPLES];
 float32_t Output[FFT_SIZE];
@@ -89,14 +89,17 @@ int main(void) {
 	// TM_ADC_Init(ADC1, ADC_Channel_0);
 	
 	/* Print on LCD */
-	TM_ILI9341_Puts(10, 10, "FFT graphic equlizer\nstm32f4-discovery.com", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN2);
+	TM_ILI9341_Puts(10, 10, "Vibration FFT Graphic", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN2);
 		
 	GPIO_Configuration();
+	LED_Initialization();
 	USART1_Configuration(); 
-	
+	Timer4_Initialization();
+	NVIC_configuration();
+	MPU9250_Config(SPI1);
+  	MPU9250_Init(SPI1);
 	
 	while (1) {
-		USART1_puts("123\r\n");
 		/* This part should be done with DMA and timer for ADC treshold */
 		/* Actually, best solution is double buffered DMA with timer for ADC treshold */
 		/* But this is only for show principle on how FFT works */
@@ -110,43 +113,44 @@ int main(void) {
 		// 	/* Imaginary part */
 		// 	Input[(uint16_t)(i + 1)] = 0;
 		// }
-	
-		/* Initialize the CFFT/CIFFT module, intFlag = 0, doBitReverse = 1 */
-		arm_cfft_radix4_init_f32(&S, FFT_SIZE, 0, 1);
+		if(colection_flag == RESET){
+			GPIO_ToggleBits(GPIOG,GPIO_Pin_14);
+			/* Initialize the CFFT/CIFFT module, intFlag = 0, doBitReverse = 1 */
+			arm_cfft_radix4_init_f32(&S, FFT_SIZE, 0, 1);
 		
-		/* Process the data through the CFFT/CIFFT module */
-		arm_cfft_radix4_f32(&S, Input);
+			/* Process the data through the CFFT/CIFFT module */
+			arm_cfft_radix4_f32(&S, collect_buff);
 		
-		/* Process the data through the Complex Magniture Module for calculating the magnitude at each bin */
-		arm_cmplx_mag_f32(Input, Output, FFT_SIZE);
+			/* Process the data through the Complex Magniture Module for calculating the magnitude at each bin */
+			arm_cmplx_mag_f32(collect_buff, Output, FFT_SIZE);
 		
-		/* Calculates maxValue and returns corresponding value */
-		arm_max_f32(Output, FFT_SIZE, &maxValue, &maxIndex);
+			/* Calculates maxValue and returns corresponding value */
+			arm_max_f32(Output, FFT_SIZE, &maxValue, &maxIndex);
 
-		/*Get average data of sample rate at 4096/2 -> 256 to display on LCD*/
-		for (i = 0; i < 256; i++) Output_average[i]=(Output[8*i]+Output[8*i+1]+Output[8*i+2]+Output[8*i+3]+Output[8*i+4]+Output[8*i+5]+Output[8*i+6]+Output[8*i+7])/8.0;
-		arm_max_f32(Output_average, 256, &avgmaxValue, &avgmaxIndex);
-		/* Display data on LCD */
-		for (i = 0; i < 256; i++) {
-			/* Draw FFT results */
-			DrawBar(30 + i,
-					220,
-					FFT_BAR_MAX_HEIGHT,
-					(uint16_t)avgmaxValue,
-					(float32_t)Output_average[(uint16_t)i],
-					0x1234,
-					0xFFFF
-			);
-		}
+			/*Get average data of sample rate at 4096/2 -> 256 to display on LCD*/
+			for (i = 0; i < 256; i++) Output_average[i]=(Output[8*i]+Output[8*i+1]+Output[8*i+2]+Output[8*i+3]+Output[8*i+4]+Output[8*i+5]+Output[8*i+6]+Output[8*i+7])/8.0;
+			arm_max_f32(Output_average, 256, &avgmaxValue, &avgmaxIndex);
+			/* Display data on LCD */
+			for (i = 0; i < 256; i++) {
+				/* Draw FFT results */
+				DrawBar(30 + i,
+						220,
+						FFT_BAR_MAX_HEIGHT,
+						(uint16_t)avgmaxValue,
+						(float32_t)Output_average[(uint16_t)i],
+						0x1234,
+						0xFFFF
+				);
+			}
+			/* We want to turn led ON only when low frequencies are active */
+			/* Output[0] = Signals DC value */
+			// if ((Output[1] + Output[2] + Output[3] + Output[4] + Output[5] + Output[6] + Output[7]) > 120) {
+			// 	TM_DISCO_LedOn(LED_GREEN);
+			// } else {
+			// 	TM_DISCO_LedOff(LED_GREEN);
+			// }
 
-
-
-		/* We want to turn led ON only when low frequencies are active */
-		/* Output[0] = Signals DC value */
-		if ((Output[1] + Output[2] + Output[3] + Output[4] + Output[5] + Output[6] + Output[7]) > 120) {
-			TM_DISCO_LedOn(LED_GREEN);
-		} else {
-			TM_DISCO_LedOff(LED_GREEN);
+		colection_flag = SET;
 		}
 	}
 }

@@ -62,19 +62,19 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_8;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
+    // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_8;
+    // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    // GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    // GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    // GPIO_Init(GPIOC, &GPIO_InitStructure);
     /*check connection*/
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+    // GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    // GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+    // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    // GPIO_Init(GPIOA, &GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
@@ -86,6 +86,22 @@ void GPIO_Configuration(void)
     /* Connect USART pins to AF */
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);   // USART1_TX
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);  // USART1_RX
+
+}
+
+void LED_Initialization(void){
+
+  GPIO_InitTypeDef  GPIO_InitStructure;
+
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOG , ENABLE); //LED3/4 GPIO Port
+
+  /* Configure the GPIO_LED pin */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14;  // LED is connected to PG13/PG14
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOG, &GPIO_InitStructure);
 
 }
 

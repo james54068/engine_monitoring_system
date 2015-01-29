@@ -22,6 +22,7 @@ void MCU_initialization(void);
 void SysTick_cfg(void);
 void RCC_Configuration(void);
 void GPIO_Configuration(void);
+void LED_Initialization(void);
 void NVIC_configuration(void);
 void USART1_Configuration(void);
 void Timer4_Initialization(void);
