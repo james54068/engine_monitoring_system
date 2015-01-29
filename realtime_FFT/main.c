@@ -37,12 +37,12 @@
 #define SAMPLES					8192			/* 256 real party and 256 imaginary parts */
 #define FFT_SIZE				SAMPLES / 2		/* FFT size is always the same size as we have samples, so 256 in our case */
 
-#define FFT_BAR_MAX_HEIGHT		100 			/* 120 px on the LCD */
+#define FFT_BAR_MAX_HEIGHT		60 			/* 120 px on the LCD */
  
 /* Global variables */
 float32_t Input[SAMPLES];
 float32_t Output[FFT_SIZE];
-float32_t Output_average[256];
+float32_t Output_average[3][256];
 
 /* Draw bar for LCD */
 /* Simple library to draw bars */
@@ -62,9 +62,9 @@ int main(void) {
 	float32_t maxValue;				/* Max FFT value is stored here */
 	uint32_t maxIndex;				/* Index in Output array where max value is */
 	/*FOR AVERAGE DATA*/
-	float32_t avgmaxValue;				
-	uint32_t avgmaxIndex;	
-	uint16_t i;
+	float32_t avgmaxValue[3];				
+	uint32_t avgmaxIndex[3];	
+	uint16_t i,j;
 	
 	// /* Initialize system */
 	SystemInit();
@@ -90,7 +90,9 @@ int main(void) {
 	
 	/* Print on LCD */
 	TM_ILI9341_Puts(10, 10, "Vibration FFT Graphic", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_GREEN2);
-		
+	TM_ILI9341_Puts(10, 70, "X", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	TM_ILI9341_Puts(10, 140, "Y", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
+	TM_ILI9341_Puts(10, 210, "Z", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);	
 	GPIO_Configuration();
 	LED_Initialization();
 	USART1_Configuration(); 
@@ -115,29 +117,46 @@ int main(void) {
 		// }
 		if(colection_flag == RESET){
 			GPIO_ToggleBits(GPIOG,GPIO_Pin_14);
-			/* Initialize the CFFT/CIFFT module, intFlag = 0, doBitReverse = 1 */
-			arm_cfft_radix4_init_f32(&S, FFT_SIZE, 0, 1);
+			for(j=0;j<3;j++){
+				/* Initialize the CFFT/CIFFT module, intFlag = 0, doBitReverse = 1 */
+				arm_cfft_radix4_init_f32(&S, FFT_SIZE, 0, 1);
 		
-			/* Process the data through the CFFT/CIFFT module */
-			arm_cfft_radix4_f32(&S, collect_buff);
+				/* Process the data through the CFFT/CIFFT module */
+				arm_cfft_radix4_f32(&S, collect_buff[j]);
 		
-			/* Process the data through the Complex Magniture Module for calculating the magnitude at each bin */
-			arm_cmplx_mag_f32(collect_buff, Output, FFT_SIZE);
+				/* Process the data through the Complex Magniture Module for calculating the magnitude at each bin */
+				arm_cmplx_mag_f32(collect_buff[j], Output, FFT_SIZE);
 		
-			/* Calculates maxValue and returns corresponding value */
-			arm_max_f32(Output, FFT_SIZE, &maxValue, &maxIndex);
-
-			/*Get average data of sample rate at 4096/2 -> 256 to display on LCD*/
-			for (i = 0; i < 256; i++) Output_average[i]=(Output[8*i]+Output[8*i+1]+Output[8*i+2]+Output[8*i+3]+Output[8*i+4]+Output[8*i+5]+Output[8*i+6]+Output[8*i+7])/8.0;
-			arm_max_f32(Output_average, 256, &avgmaxValue, &avgmaxIndex);
+				/* Calculates maxValue and returns corresponding value */
+				arm_max_f32(Output, FFT_SIZE, &maxValue, &maxIndex);
+					/*Get average data of sample rate at 4096/2 -> 256 to display on LCD*/
+				for (i = 0; i < 256; i++) Output_average[j][i]=(Output[8*i]+Output[8*i+1]+Output[8*i+2]+Output[8*i+3]+Output[8*i+4]+Output[8*i+5]+Output[8*i+6]+Output[8*i+7])/8.0;
+				arm_max_f32(Output_average[j], 256, &avgmaxValue[j], &avgmaxIndex[j]);
+			}	
 			/* Display data on LCD */
 			for (i = 0; i < 256; i++) {
 				/* Draw FFT results */
 				DrawBar(30 + i,
-						220,
+						90,
 						FFT_BAR_MAX_HEIGHT,
-						(uint16_t)avgmaxValue,
-						(float32_t)Output_average[(uint16_t)i],
+						(uint16_t)avgmaxValue[0],
+						(float32_t)Output_average[0][(uint16_t)i],
+						0x1234,
+						0xFFFF
+				);
+				DrawBar(30 + i,
+						160,
+						FFT_BAR_MAX_HEIGHT,
+						(uint16_t)avgmaxValue[1],
+						(float32_t)Output_average[1][(uint16_t)i],
+						0x1234,
+						0xFFFF
+				);
+				DrawBar(30 + i,
+						230,
+						FFT_BAR_MAX_HEIGHT,
+						(uint16_t)avgmaxValue[2],
+						(float32_t)Output_average[2][(uint16_t)i],
 						0x1234,
 						0xFFFF
 				);
@@ -149,7 +168,11 @@ int main(void) {
 			// } else {
 			// 	TM_DISCO_LedOff(LED_GREEN);
 			// }
-
+			for(j=0;j<3;j++){
+				for(i=0;i<8192;i++){
+					collect_buff[j][i]=0x00;
+				}
+			}
 		colection_flag = SET;
 		}
 	}

@@ -40,7 +40,7 @@
 #include "tm_stm32f4_delay.h"
 uint8_t buff_len = 0;
 FlagStatus colection_flag = SET;
-float collect_buff[8192]; 
+float collect_buff[3][8192]; 
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{
   */
@@ -200,21 +200,28 @@ void TIM4_IRQHandler()
       MPU9250_ReadRegs(SPI1,MPU6500_ACCEL_XOUT_H, mpu6500A_buf, 14);
 
       GPIO_ToggleBits(GPIOA,GPIO_Pin_2);
-      for(i=0; i<3; i++) 
+      for(i=0; i<7; i++) 
       AccelGyroA[i]=((s16)((u16)mpu6500A_buf[2*i] << 8) + mpu6500A_buf[2*i+1]);
 
       if(colection_flag && j<8192){
-        if(j%2) collect_buff[j]=0.0;
-        else collect_buff[j] = AccelGyroA[0]/2048.0;
-        // sprintf(buff,"%f,%f\r\n",collect_buff[j],j);
-        // USART1_puts(buff);
+        if(j%2){
+          collect_buff[0][j]=0.0;
+          collect_buff[1][j]=0.0;
+          collect_buff[2][j]=0.0;
+        }
+        else{
+          collect_buff[0][j] = AccelGyroA[0]/2048.0;
+          collect_buff[1][j] = AccelGyroA[1]/2048.0;
+          collect_buff[2][j] = AccelGyroA[2]/2048.0;
+        } 
         j++;
       }else{
         j=0;
         colection_flag = RESET;
         GPIO_ToggleBits(GPIOG,GPIO_Pin_13);
       } 
-      
+      sprintf(buff,"%d,%d,%d,%d,%d,%d\r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroA[4],AccelGyroA[5],AccelGyroA[6]);
+      USART1_puts(buff);
 
       // for(i=0;i<6;i++) {
       //   buff[i]=mpu6500A_buf[i];
