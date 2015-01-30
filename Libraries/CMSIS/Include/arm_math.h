@@ -277,9 +277,9 @@
 #include "core_cm0plus.h"
 #define ARM_MATH_CM0_FAMILY
 #else
-#include "core_cm4.h"
+// #include "core_cm4.h"
 #include "stm32f4xx.h"
-#warning "Define either ARM_MATH_CM4 OR ARM_MATH_CM3...By Default building on ARM_MATH_CM4....."
+// #warning "Define either ARM_MATH_CM4 OR ARM_MATH_CM3...By Default building on ARM_MATH_CM4....."
 #endif
 
 #undef  __CMSIS_GENERIC         /* enable NVIC and Systick functions */
@@ -5182,7 +5182,7 @@ void arm_rfft_fast_f32(
     *pIa = Ialpha;
 
     /* Calculating pIb from Ialpha and Ibeta by equation pIb = -(1/2) * Ialpha + (sqrt(3)/2) * Ibeta */
-    *pIb = -0.5 * Ialpha + (float32_t) 0.8660254039 *Ibeta;
+    *pIb = (float32_t)-0.5 * Ialpha + (float32_t) 0.8660254039 *Ibeta;
 
   }
 
@@ -6846,6 +6846,41 @@ void arm_rfft_fast_f32(
   /**
    * @ingroup groupInterpolation
    */
+  void arm_radix4_butterfly_f32(
+  float32_t * pSrc,
+  uint16_t fftLen,
+  float32_t * pCoef,
+  uint16_t twidCoefModifier);
+
+  void arm_radix4_butterfly_inverse_f32(
+  float32_t * pSrc,
+  uint16_t fftLen,
+  float32_t * pCoef,
+  uint16_t twidCoefModifier,
+  float32_t onebyfftLen);
+
+  void arm_cfft_radix4_f32(
+  const arm_cfft_radix4_instance_f32 * S,
+  float32_t * pSrc);
+
+  void arm_bitreversal_f32(
+  float32_t * pSrc,
+  uint16_t fftSize,
+  uint16_t bitRevFactor,
+  uint16_t * pBitRevTab);
+
+  void arm_bitreversal_q31(
+  q31_t * pSrc,
+  uint32_t fftLen,
+  uint16_t bitRevFactor,
+  uint16_t * pBitRevTable);
+
+  void arm_bitreversal_q15(
+  q15_t * pSrc16,
+  uint32_t fftLen,
+  uint16_t bitRevFactor,
+  uint16_t * pBitRevTab);
+
 
   /**
    * @defgroup BilinearInterpolate Bilinear Interpolation

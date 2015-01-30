@@ -202,58 +202,40 @@ void TIM4_IRQHandler()
       for(i=0; i<7; i++) 
       AccelGyroA[i]=((s16)((u16)mpu6500A_buf[2*i] << 8) + mpu6500A_buf[2*i+1]);
 
-      if(colection_flag && j<8192){
-        // if(buffer_flag==1){
-          if(j%2){
-            collect_buff[0][j]=0.0;
-            collect_buff[1][j]=0.0;
-            collect_buff[2][j]=0.0;
-          }
-          else{
-            collect_buff[0][j] = AccelGyroA[0]/2048.0;
-            collect_buff[1][j] = AccelGyroA[1]/2048.0;
-            collect_buff[2][j] = AccelGyroA[2]/2048.0;
-          } 
-          j++;   
-        // }
-        // else if(buffer_flag==2){
-        //   if(j%2){
-        //     collect_buff[3][j]=0.0;
-        //     collect_buff[4][j]=0.0;
-        //     collect_buff[5][j]=0.0;
-        //   }
-        //   else{
-        //     collect_buff[3][j] = AccelGyroA[0]/2048.0;
-        //     collect_buff[4][j] = AccelGyroA[1]/2048.0;
-        //     collect_buff[5][j] = AccelGyroA[2]/2048.0;
-        //   } 
-        //   j++; 
-        // }
+      if(colection_flag && j<4096){
+        
+          collect_buff[0][j+1]=0.0;
+          collect_buff[1][j+1]=0.0;
+          collect_buff[2][j+1]=0.0;
+          collect_buff[0][j] = AccelGyroA[0]/2048.0;
+          collect_buff[1][j] = AccelGyroA[1]/2048.0;
+          collect_buff[2][j] = AccelGyroA[2]/2048.0;
+          j+=2;   
       }else{
         j=0;
         colection_flag = RESET;
         GPIO_ToggleBits(GPIOG,GPIO_Pin_13);
       } 
 
-      buff[0]='A';
-      buff[1]='B';
-      buff[2]='C';
-      buff[3]='D';
-      buff[4]=mpu6500A_buf[1];
-      buff[5]=mpu6500A_buf[0];
-      buff[6]=mpu6500A_buf[3];
-      buff[7]=mpu6500A_buf[2];
-      buff[8]=mpu6500A_buf[5];
-      buff[9]=mpu6500A_buf[4];  
-      buff[10]=mpu6500A_buf[9];
-      buff[11]=mpu6500A_buf[8]; 
-      buff[12]=mpu6500A_buf[11];
-      buff[13]=mpu6500A_buf[10]; 
-      buff[14]=mpu6500A_buf[13];
-      buff[15]=mpu6500A_buf[12]; 
-      buff[16]=(u8)rpm;
-      buff[17]=(u8)(rpm>>8);
-      DMA_Cmd(DMA2_Stream7,ENABLE);
+      // buff[0]='A';
+      // buff[1]='B';
+      // buff[2]='C';
+      // buff[3]='D';
+      // buff[4]=mpu6500A_buf[1];
+      // buff[5]=mpu6500A_buf[0];
+      // buff[6]=mpu6500A_buf[3];
+      // buff[7]=mpu6500A_buf[2];
+      // buff[8]=mpu6500A_buf[5];
+      // buff[9]=mpu6500A_buf[4];  
+      // buff[10]=mpu6500A_buf[9];
+      // buff[11]=mpu6500A_buf[8]; 
+      // buff[12]=mpu6500A_buf[11];
+      // buff[13]=mpu6500A_buf[10]; 
+      // buff[14]=mpu6500A_buf[13];
+      // buff[15]=mpu6500A_buf[12]; 
+      // buff[16]=(u8)rpm;
+      // buff[17]=(u8)(rpm>>8);
+      // DMA_Cmd(DMA2_Stream7,ENABLE);
       // char  word123[50];
       // sprintf(word123,"%d\r\n",rpm);
       // USART1_puts(word123);
