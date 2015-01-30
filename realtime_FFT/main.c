@@ -15,34 +15,13 @@
  *			- ARM_MATH_CM4
  *			- __FPU_PRESENT=1
  */
-/* Include core modules */
-#include "stm32f4xx.h"
-/* Include my libraries here */
-#include "defines.h"
-#include "tm_stm32f4_delay.h"
-#include "tm_stm32f4_ili9341_ltdc.h"
-#include "tm_stm32f4_adc.h"
-#include "tm_stm32f4_disco.h"
-#include "tm_stm32f4_sdram.h"
-#include "tm_stm32f4_dac_signal.h"
 
-#include <stdio.h>
-
-/* Include arm_math.h mathematic functions */
-#include "arm_math.h"
-
-#include "mcu_setting.h"
-#include "stm32f4xx_it.h"
-/* FFT settings */
-#define SAMPLES					8192			/* 256 real party and 256 imaginary parts */
-#define FFT_SIZE				SAMPLES / 2		/* FFT size is always the same size as we have samples, so 256 in our case */
-
-#define FFT_BAR_MAX_HEIGHT		60 			/* 120 px on the LCD */
- 
+#include "main.h"
 /* Global variables */
 float32_t Input[SAMPLES];
 float32_t Output[FFT_SIZE];
-float32_t Output_average[3][256];
+float32_t Output_average[3][256]; 
+
 
 /* Draw bar for LCD */
 /* Simple library to draw bars */
@@ -119,6 +98,7 @@ int main(void) {
 		// 	Input[(uint16_t)(i + 1)] = 0;
 		// }
 		if(colection_flag == RESET){
+			colection_flag = SET;
 			GPIO_ToggleBits(GPIOG,GPIO_Pin_14);
 			for(j=0;j<3;j++){
 				/* Initialize the CFFT/CIFFT module, intFlag = 0, doBitReverse = 1 */
@@ -133,7 +113,7 @@ int main(void) {
 				/* Calculates maxValue and returns corresponding value */
 				arm_max_f32(Output, FFT_SIZE, &maxValue, &maxIndex);
 					/*Get average data of sample rate at 4096/2 -> 256 to display on LCD*/
-				for (i = 0; i < 256; i++) Output_average[j][i]=(Output[8*i]+Output[8*i+1]+Output[8*i+2]+Output[8*i+3]+Output[8*i+4]+Output[8*i+5]+Output[8*i+6]+Output[8*i+7])/8.0;
+				for (i = 0; i < 256; i++) Output_average[j][i]=(Output[8*i]+Output[8*i+1]+Output[8*i+2]+Output[8*i+3]+Output[8*i+4]+Output[8*i+5]+Output[8*i+6]+Output[8*i+7])/(float32_t)8.0;
 				arm_max_f32(Output_average[j], 256, &avgmaxValue[j], &avgmaxIndex[j]);
 			}	
 			/* Display data on LCD */
@@ -176,7 +156,6 @@ int main(void) {
 					collect_buff[j][i]=0x00;
 				}
 			}
-		colection_flag = SET;
 		}
 	}
 }

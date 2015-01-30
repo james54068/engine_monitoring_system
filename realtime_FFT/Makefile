@@ -79,42 +79,42 @@ OBJS=	./system_stm32f4xx.o \
         $(ST)/src/stm32f4xx_flash.o \
         $(ST)/src/stm32f4xx_gpio.o \
         $(ST)/src/stm32f4xx_ltdc.o \
-        $(ST)/src/stm32f4xx_sai.o \
         $(ST)/src/stm32f4xx_fmc.o \
         $(ST)/src/stm32f4xx_spi.o \
         $(ST)/src/stm32f4xx_usart.o \
         $(ST)/src/stm32f4xx_dma.o \
         $(ST)/src/stm32f4xx_tim.o \
-        $(ST)/src/stm32f4xx_dac.o \
-        $(ST)/src/stm32f4xx_adc.o \
         $(CMSIS)/DSP_Lib/Source/TransformFunctions/arm_cfft_radix4_f32.o \
         $(CMSIS)/DSP_Lib/Source/TransformFunctions/arm_cfft_radix4_init_f32.o \
         $(CMSIS)/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mag_f32.o \
         $(CMSIS)/DSP_Lib/Source/StatisticsFunctions/arm_max_f32.o \
         $(CMSIS)/DSP_Lib/Source/CommonTables/arm_common_tables.o \
         $(CMSIS)/DSP_Lib/Source/TransformFunctions/arm_bitreversal.o \
-        $(STM32F429_LIB)/stm32f429i_discovery_lcd.o \
-        $(STM32F429_LIB)/stm32f429i_discovery_sdram.o \
-        $(COMMON)/lcd_log.o \
-        $(COMMON)/fonts.o \
         $(FFT)/TM/tm_stm32f4_delay.o \
         $(FFT)/TM/tm_stm32f4_fonts.o \
         $(FFT)/TM/tm_stm32f4_sdram.o \
         $(FFT)/TM/tm_stm32f4_ili9341_ltdc.o \
-        $(FFT)/TM/tm_stm32f4_dac_signal.o \
-        $(FFT)/TM/tm_stm32f4_timer_properties.o \
-        $(FFT)/TM/tm_stm32f4_adc.o \
         $(FFT)/TM/tm_stm32f4_disco.o \
         $(FFT)/TM/tm_stm32f4_spi.o \
         $(MPU6500)/mpu6500.o \
         ./mcu_setting.o \
         ./stm32f4xx_it.o \
-        ./functions.o \
         ./main.o \
         $(STARTUP)
         # $(LCD)/drawing.o \
+        # ./functions.o \
        
+        # $(FFT)/TM/tm_stm32f4_adc.o \
+        # $(FFT)/TM/tm_stm32f4_dac_signal.o \
+        # $(FFT)/TM/tm_stm32f4_timer_properties.o \
        
+       	# $(ST)/src/stm32f4xx_dac.o \
+        # $(ST)/src/stm32f4xx_adc.o \
+        # $(ST)/src/stm32f4xx_sai.o \
+        # $(STM32F429_LIB)/stm32f429i_discovery_lcd.o \
+        # $(STM32F429_LIB)/stm32f429i_discovery_sdram.o \
+        # $(COMMON)/lcd_log.o \
+        # $(COMMON)/fonts.o \
         
 #Make all
 all:$(BIN_IMAGE)

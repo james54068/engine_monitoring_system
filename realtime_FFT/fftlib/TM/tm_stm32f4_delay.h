@@ -76,6 +76,12 @@ void Delayms(__IO uint32_t nTime);
  *
  * Initialize timer settings for delay
  */
+void SysTick_Handler(void);
+/**
+ *
+ *
+ * SysTick_Handler
+ */
 void TM_DELAY_Init(void);
 
 /**

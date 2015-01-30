@@ -24,7 +24,7 @@ extern void TM_SPI2_Init(TM_SPI_PinsPack_t pinspack);
 extern void TM_SPI3_Init(TM_SPI_PinsPack_t pinspack);
 extern void TM_SPI4_Init(TM_SPI_PinsPack_t pinspack);
 extern void TM_SPI5_Init(TM_SPI_PinsPack_t pinspack);
-extern void TM_SPI6_Init(TM_SPI_PinsPack_t pinspack);
+extern void TM_SPI6_Init(void);
 
 void TM_SPI_Init(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack) {
 	if (SPIx == SPI1) {
@@ -38,7 +38,7 @@ void TM_SPI_Init(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack) {
 	} else if (SPIx == SPI5) {
 		TM_SPI5_Init(pinspack);
 	} else if (SPIx == SPI6) {
-		TM_SPI6_Init(pinspack);
+		TM_SPI6_Init();
 	}
 }
 
@@ -418,7 +418,7 @@ void TM_SPI5_Init(TM_SPI_PinsPack_t pinspack) {
 	SPI_Cmd(SPI5, ENABLE);
 }
 
-void TM_SPI6_Init(TM_SPI_PinsPack_t pinspack) {
+void TM_SPI6_Init(void) {
 	GPIO_InitTypeDef GPIO_InitStruct;
 	SPI_InitTypeDef SPI_InitStruct;
 

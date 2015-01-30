@@ -39,6 +39,7 @@
 /* Exported constants --------------------------------------------------------*/
 extern uint8_t buff_len;
 extern FlagStatus colection_flag;
+extern uint8_t buffer_flag;
 extern float collect_buff[3][8192]; 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
