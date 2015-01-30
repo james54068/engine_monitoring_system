@@ -223,104 +223,54 @@ void TIM4_IRQHandler()
       buff[1]='B';
       buff[2]='C';
       buff[3]='D';
-      buff[4]=mpu6500A_buf[5];
-      buff[5]=mpu6500A_buf[4];
+      buff[4]=mpu6500A_buf[1];
+      buff[5]=mpu6500A_buf[0];
       buff[6]=mpu6500A_buf[3];
       buff[7]=mpu6500A_buf[2];
-      buff[8]=mpu6500A_buf[1];
-      buff[9]=mpu6500A_buf[0];
+      buff[8]=mpu6500A_buf[5];
+      buff[9]=mpu6500A_buf[4];  
+      buff[10]=mpu6500A_buf[9];
+      buff[11]=mpu6500A_buf[8]; 
+      buff[12]=mpu6500A_buf[11];
+      buff[13]=mpu6500A_buf[10]; 
+      buff[14]=mpu6500A_buf[13];
+      buff[15]=mpu6500A_buf[12]; 
+      buff[16]=(u8)rpm;
+      buff[17]=(u8)(rpm>>8);
       DMA_Cmd(DMA2_Stream7,ENABLE);
-      // sprintf(buff,"%d,%d,%d,%d,%d,%d\r\n",AccelGyroA[0],AccelGyroA[1],AccelGyroA[2],AccelGyroA[4],AccelGyroA[5],AccelGyroA[6]);
-      // USART1_puts(buff);
+      // char  word123[50];
+      // sprintf(word123,"%d\r\n",rpm);
+      // USART1_puts(word123);
 
-      // for(i=0;i<6;i++) {
-      //   buff[i]=mpu6500A_buf[i];
-      // }
-      // buff[6]='A';
-      // buff[7]='B';
-      // buff[8]='C';
-      // buff[9]='D';
-
-      // sprintf(buff,"%d\r\n",rpm);
-      // // DMA2_Stream7->NDTR=strlen(buff);
-      // // DMA_Cmd(DMA2_Stream7,ENABLE);
-      // // DMA2_stream7_channel4_init();
-      // USART1_puts(buff);
-     //  timestamp++;
-     // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-     //    USART_SendData(USART1, timestamp);
-
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, 'A');
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, 'B');
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, 'C');
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, 'D');
-    
-    
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[5]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[4]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[3]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[2]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[1]);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1, mpu6500A_buf[0]);
-  
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1,(u8)rpm);
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-      //   USART_SendData(USART1,(u8)(rpm>>8));
-     
-      // buff_size = strlen(buff);
-      // DMA2_Stream7->NDTR = buff_size ;
-      // USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
-      // DMA_Cmd(DMA2_Stream7,ENABLE);         
-      // while(USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET);
- 
-      // USART_DMACmd(USART1,USART_DMAReq_Tx,DISABLE);
-    
     TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
   } 
 }
 
 
-void TIM3_IRQHandler(void)  
+void TIM2_IRQHandler(void)  
 {
-  if (TIM_GetITStatus(TIM3, TIM_IT_Update) == SET)
+  if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)
   {
-     TIM_ClearITPendingBit(TIM3, TIM_IT_Update); 
-     rpm = 0;
+     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+     GPIO_ToggleBits(GPIOA,GPIO_Pin_1); 
+     // rpm = 0;
    
   }
-  else if (TIM_GetITStatus(TIM3, TIM_IT_CC1) == SET)
+  else if (TIM_GetITStatus(TIM2, TIM_IT_CC1) == SET)
   {
-  uint32_t IC2Value;
-  GPIO_ToggleBits(GPIOC,GPIO_Pin_8); 
+  uint32_t IC2Value; 
   //RCC_GetClocksFreq(&RCC_Clocks);  
   
   /* Clear TIM2 Capture compare interrupt pending bit */  
-  TIM_ClearITPendingBit(TIM3, TIM_IT_CC1); 
+  TIM_ClearITPendingBit(TIM2, TIM_IT_CC1); 
 
   /* Get the Input Capture value */  
-  IC2Value = TIM_GetCapture1(TIM3);
-
-  // sprintf(buff,"%d\r\n",IC2Value);
-  // USART1_puts(buff);
-
-  rpm = (100000/IC2Value)*60;
-  TIM_SetCounter(TIM3,0);
-  // IC2Value = 0;
+  IC2Value = TIM_GetCapture1(TIM2);
+  TIM_SetCounter(TIM2,0);
+  rpm = (1000000/IC2Value)*60;  
+  IC2Value = 0;
 
   // TIM_SetAutoreload(TIM3,0);
-  //sprintf(rpm_buff,"%d",rpm);
-  // USART1_puts(rpm_buff);
   }
 
 } 

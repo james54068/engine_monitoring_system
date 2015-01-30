@@ -98,6 +98,8 @@ int main(void) {
 	USART1_Configuration();
 	DMA2_stream7_channel4_init(); 
 	Timer4_Initialization();
+	Timer3_Initialization();
+    Timer3_Channel_init();
 	NVIC_configuration();
 	MPU9250_Config(SPI1);
   	MPU9250_Init(SPI1);
